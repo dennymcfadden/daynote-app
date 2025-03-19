@@ -1,3 +1,4 @@
+
 import React, { useRef } from "react";
 
 type DatePillProps = {
@@ -41,7 +42,7 @@ export const DateSelector: React.FC = () => {
     <div className="relative w-full">
       <div
         ref={scrollRef}
-        className="flex items-center gap-[26px] overflow-x-auto px-5 py-0 max-sm:gap-4 scrollbar-hide"
+        className="flex items-center justify-center gap-[26px] overflow-x-auto px-5 py-0 max-sm:gap-4 scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <DatePill month="MAR" day="23" />
