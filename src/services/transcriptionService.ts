@@ -3,7 +3,11 @@
  * Service for handling audio transcription using OpenAI's Whisper API
  */
 
-export async function transcribeAudio(audioBlob: Blob): Promise<string> {
+export async function transcribeAudio(audioBlob: Blob, apiKey: string): Promise<string> {
+  if (!apiKey) {
+    throw new Error("OpenAI API key is required for transcription");
+  }
+
   try {
     // Create form data to send the audio file
     const formData = new FormData();
@@ -14,7 +18,7 @@ export async function transcribeAudio(audioBlob: Blob): Promise<string> {
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY || ''}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: formData,
     });
