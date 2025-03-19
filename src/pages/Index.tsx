@@ -1,13 +1,23 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React from "react";
+import { Header } from "@/components/journal/Header";
+import { DateSelector } from "@/components/journal/DateSelector";
+import { JournalPrompt } from "@/components/journal/JournalPrompt";
+import { JournalEntries } from "@/components/journal/JournalEntries";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <>
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+      />
+      <main className="flex flex-col items-center gap-12 min-h-screen w-full bg-[#F3EFEC] px-0 py-6">
+        <Header />
+        <DateSelector />
+        <JournalPrompt />
+        <JournalEntries />
+      </main>
+    </>
   );
 };
 
