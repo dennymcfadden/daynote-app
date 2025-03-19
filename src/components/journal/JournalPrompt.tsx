@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { transcribeAudio } from "@/services/transcriptionService";
 
 export const JournalPrompt: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -41,9 +42,25 @@ export const JournalPrompt: React.FC = () => {
         }
       };
       
-      mediaRecorder.onstop = () => {
-        // Mock transcription (In a real app, you would send this to Whisper API)
-        performMockTranscription();
+      mediaRecorder.onstop = async () => {
+        try {
+          // Process the recorded audio for transcription
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          setIsTranscribing(true);
+          
+          // Send to Whisper API for transcription
+          const transcribedText = await transcribeAudio(audioBlob);
+          setTranscription(transcribedText);
+        } catch (error) {
+          console.error("Transcription error:", error);
+          toast({
+            title: "Transcription Error",
+            description: "Failed to transcribe your recording. Please try again.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsTranscribing(false);
+        }
       };
       
       mediaRecorder.start();
@@ -78,19 +95,7 @@ export const JournalPrompt: React.FC = () => {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-      
-      setIsTranscribing(true);
     }
-  };
-
-  // This is a mock function - in a real app, you would send the audio to the Whisper API
-  const performMockTranscription = () => {
-    setTimeout(() => {
-      // Mock transcription result
-      const mockText = "Today I went for a long walk in the park. The weather was beautiful and I saw many dogs being walked by their owners. I felt really peaceful and relaxed after spending time in nature.";
-      setTranscription(mockText);
-      setIsTranscribing(false);
-    }, 2000); // Simulate 2-second transcription process
   };
 
   const handleSave = () => {
