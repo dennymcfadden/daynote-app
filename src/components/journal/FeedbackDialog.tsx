@@ -74,15 +74,12 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>We love feedback</DialogTitle>
-          <DialogDescription>
-            How could Daynote be improved?
-          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Textarea 
-              placeholder="Describe your issue or idea..." 
+              placeholder="How could daynote be improved?" 
               className="min-h-[120px]"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
