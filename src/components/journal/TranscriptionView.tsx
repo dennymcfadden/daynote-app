@@ -17,7 +17,7 @@ export const TranscriptionView: React.FC<TranscriptionViewProps> = ({
   onSave
 }) => {
   return <div className="flex flex-col gap-3 w-full max-w-xl mx-auto px-4">
-      <Textarea className="min-h-[200px]" value={transcription} onChange={e => onTranscriptionChange(e.target.value)} placeholder="Your transcribed text will appear here..." />
+      <Textarea className="min-h-[200px]" value={transcription} onChange={e => onTranscriptionChange(e.target.value)} placeholder="Your entry..." />
       <div className="flex flex-col items-center gap-3 mt-2">
         <Button onClick={onSave} className="w-full">
           Save Entry
