@@ -18,6 +18,7 @@ export const JournalPrompt: React.FC = () => {
   const [isTypingMode, setIsTypingMode] = useState(false);
   const [typedEntry, setTypedEntry] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [imageFile, setImageFile] = useState<File | null>(null);
   
   const {
     isRecording,
@@ -53,6 +54,7 @@ export const JournalPrompt: React.FC = () => {
     
     setIsTypingMode(true);
     setTypedEntry("");
+    setImageFile(null);
   };
 
   const handleSave = async (content: string) => {
@@ -61,7 +63,7 @@ export const JournalPrompt: React.FC = () => {
     }
 
     try {
-      await saveJournalEntry(content, selectedDate);
+      await saveJournalEntry(content, selectedDate, imageFile);
       
       toast({
         title: "Journal Entry Saved",
@@ -71,6 +73,7 @@ export const JournalPrompt: React.FC = () => {
       resetTranscription();
       setIsTypingMode(false);
       setTypedEntry("");
+      setImageFile(null);
     } catch (error) {
       handleError("Saving Entry", error);
     }
@@ -83,6 +86,7 @@ export const JournalPrompt: React.FC = () => {
     } else {
       resetTranscription();
     }
+    setImageFile(null);
   };
 
   if (isTranscribing) {
@@ -105,6 +109,8 @@ export const JournalPrompt: React.FC = () => {
       onTranscriptionChange={setTranscription}
       onCancel={handleCancel}
       onSave={() => handleSave(transcription)}
+      imageFile={imageFile}
+      onImageChange={setImageFile}
     />;
   }
 
@@ -114,6 +120,8 @@ export const JournalPrompt: React.FC = () => {
       onTranscriptionChange={setTypedEntry}
       onCancel={handleCancel}
       onSave={() => handleSave(typedEntry)}
+      imageFile={imageFile}
+      onImageChange={setImageFile}
     />;
   }
 

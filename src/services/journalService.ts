@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -7,20 +8,53 @@ export type JournalEntry = {
   created_at: string;
   updated_at: string;
   entry_date?: string;
+  image_url?: string | null;
 };
 
-export const saveJournalEntry = async (content: string, entryDate: Date = new Date()) => {
+export const saveJournalEntry = async (
+  content: string, 
+  entryDate: Date = new Date(),
+  imageFile: File | null = null
+) => {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   if (sessionError || !sessionData.session) {
     throw new Error("Authentication required");
   }
   
+  let imageUrl = null;
+  
+  // Handle image upload if provided
+  if (imageFile) {
+    const userId = sessionData.session.user.id;
+    const timestamp = Date.now();
+    const fileExt = imageFile.name.split('.').pop();
+    const filePath = `${userId}/${timestamp}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('journal_images')
+      .upload(filePath, imageFile);
+    
+    if (uploadError) {
+      console.error("Error uploading image:", uploadError);
+      throw new Error("Failed to upload image");
+    }
+    
+    // Get the public URL for the uploaded image
+    const { data: urlData } = supabase.storage
+      .from('journal_images')
+      .getPublicUrl(filePath);
+      
+    imageUrl = urlData.publicUrl;
+  }
+  
+  // Save the journal entry with optional image URL
   const { data, error } = await supabase
     .from("journal_entries")
     .insert({ 
       content,
       user_id: sessionData.session.user.id,
-      entry_date: entryDate.toISOString()
+      entry_date: entryDate.toISOString(),
+      image_url: imageUrl
     })
     .select()
     .single();
