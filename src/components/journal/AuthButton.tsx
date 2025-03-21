@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Download, LogOut, User } from "lucide-react";
+import { Download, LogOut } from "lucide-react";
 import { downloadJournalEntriesAsCsv } from "@/utils/csvExport";
 
 export const AuthButton = () => {
@@ -77,10 +77,6 @@ export const AuthButton = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-          <User className="h-4 w-4" />
-          <span>Account</span>
-        </DropdownMenuItem>
         <DropdownMenuItem 
           className="flex items-center gap-2 cursor-pointer" 
           onClick={handleDownloadEntries}
