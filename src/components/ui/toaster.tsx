@@ -1,4 +1,6 @@
+
 import { useToast } from "@/hooks/use-toast"
+import { useIsMobile } from "@/hooks/use-mobile"
 import {
   Toast,
   ToastClose,
@@ -10,7 +12,8 @@ import {
 
 export function Toaster() {
   const { toasts } = useToast()
-
+  const isMobile = useIsMobile()
+  
   return (
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
@@ -27,7 +30,11 @@ export function Toaster() {
           </Toast>
         )
       })}
-      <ToastViewport />
+      <ToastViewport className={
+        isMobile 
+          ? "fixed bottom-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"
+          : "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"
+      } />
     </ToastProvider>
   )
 }
