@@ -73,16 +73,16 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Send Feedback</DialogTitle>
+          <DialogTitle>We love feedback</DialogTitle>
           <DialogDescription>
-            Share your thoughts, report an issue, or suggest an improvement.
+            How could Daynote be improved?
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Textarea 
-              placeholder="Describe your feedback or issue..." 
+              placeholder="Describe your issue or idea..." 
               className="min-h-[120px]"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -90,12 +90,7 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
           </div>
           
           <div className="text-xs text-muted-foreground">
-            <p>Your feedback will include:</p>
-            <ul className="list-disc pl-4 mt-1 space-y-1">
-              <li>Email: {user?.email || "Anonymous"}</li>
-              <li>Browser information</li>
-              <li>Device information</li>
-            </ul>
+            <p>Your feedback will include browser & device information.</p>
           </div>
           
           <DialogFooter className="sm:justify-end">
@@ -108,7 +103,7 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit Feedback"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </DialogFooter>
         </form>
