@@ -18,13 +18,14 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
   showPermissionPrompt
 }) => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
-  const [remainingTime, setRemainingTime] = useState(MAX_RECORDING_TIME - recordingTime);
+  const [remainingTime, setRemainingTime] = useState(MAX_RECORDING_TIME);
   
   // Update the remaining time whenever recordingTime changes
   useEffect(() => {
     console.log("Recording time updated:", recordingTime);
-    console.log("New remaining time:", MAX_RECORDING_TIME - recordingTime);
-    setRemainingTime(MAX_RECORDING_TIME - recordingTime);
+    const newRemainingTime = MAX_RECORDING_TIME - recordingTime;
+    console.log("New remaining time:", newRemainingTime);
+    setRemainingTime(newRemainingTime);
   }, [recordingTime]);
   
   const formatTime = (seconds: number) => {

@@ -88,9 +88,10 @@ export const useAudioRecorder = () => {
       }
       
       timerRef.current = setInterval(() => {
-        setRecordingTime((prevTime) => {
-          console.log("Incrementing recording time to:", prevTime + 1);
-          return prevTime + 1;
+        setRecordingTime(prevTime => {
+          const newTime = prevTime + 1;
+          console.log("Recording time incremented to:", newTime);
+          return newTime;
         });
       }, 1000);
       
