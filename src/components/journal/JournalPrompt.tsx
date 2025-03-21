@@ -1,19 +1,20 @@
 
 import React from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { saveJournalEntry } from "@/services/journalService";
 import { PromptView } from "./PromptView";
 import { RecordingView } from "./RecordingView";
 import { TranscribingView } from "./TranscribingView";
 import { TranscriptionView } from "./TranscriptionView";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
+import { useAuthCheck } from "@/hooks/useAuthCheck";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export const JournalPrompt: React.FC = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { checkAuth } = useAuthCheck();
+  const { handleError } = useErrorHandler();
+  
   const {
     isRecording,
     recordingTime,
@@ -26,13 +27,7 @@ export const JournalPrompt: React.FC = () => {
   } = useAudioRecorder();
 
   const handleStartRecording = async () => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to create journal entries",
-        variant: "destructive",
-      });
-      navigate("/auth");
+    if (!checkAuth("create journal entries")) {
       return;
     }
     
@@ -40,13 +35,7 @@ export const JournalPrompt: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to save journal entries",
-        variant: "destructive",
-      });
-      navigate("/auth");
+    if (!checkAuth("save journal entries")) {
       return;
     }
 
@@ -60,14 +49,7 @@ export const JournalPrompt: React.FC = () => {
       
       resetTranscription();
     } catch (error) {
-      console.error("Error saving journal entry:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      
-      toast({
-        title: "Error Saving Entry",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      handleError("Saving Entry", error);
     }
   };
 

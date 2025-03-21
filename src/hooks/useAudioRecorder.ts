@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { transcribeAudio } from "@/services/journalService";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export const useAudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -13,6 +14,7 @@ export const useAudioRecorder = () => {
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     return () => {
@@ -48,14 +50,7 @@ export const useAudioRecorder = () => {
           const transcribedText = await transcribeAudio(audioBlob);
           setTranscription(transcribedText);
         } catch (error) {
-          console.error("Transcription error:", error);
-          const errorMessage = error instanceof Error ? error.message : "Unknown error";
-          
-          toast({
-            title: "Transcription Error",
-            description: errorMessage,
-            variant: "destructive",
-          });
+          handleError("Transcription", error);
         } finally {
           setIsTranscribing(false);
         }
@@ -70,12 +65,7 @@ export const useAudioRecorder = () => {
       }, 1000);
       
     } catch (error) {
-      console.error("Error accessing microphone:", error);
-      toast({
-        title: "Microphone Error",
-        description: "Unable to access your microphone. Please check permissions.",
-        variant: "destructive",
-      });
+      handleError("Microphone", error);
     }
   };
 
