@@ -9,6 +9,7 @@ import { TranscriptionView } from "./TranscriptionView";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { JournalEntries } from "./JournalEntries";
 
 export const JournalPrompt: React.FC = () => {
   const { toast } = useToast();
@@ -109,10 +110,15 @@ export const JournalPrompt: React.FC = () => {
     />;
   }
 
-  return <PromptView 
-    onStartRecording={handleStartRecording}
-    onStartTyping={handleStartTyping}
-    selectedDate={selectedDate}
-    onDateChange={setSelectedDate}
-  />;
+  return (
+    <>
+      <PromptView 
+        onStartRecording={handleStartRecording}
+        onStartTyping={handleStartTyping}
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+      />
+      <JournalEntries selectedDate={selectedDate} />
+    </>
+  );
 };

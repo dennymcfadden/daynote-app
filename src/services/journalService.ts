@@ -30,16 +30,25 @@ export const saveJournalEntry = async (content: string, entryDate: Date = new Da
   return data as JournalEntry;
 };
 
-export const getJournalEntries = async () => {
+export const getJournalEntries = async (date?: Date) => {
   const { data: sessionData } = await supabase.auth.getSession();
   if (!sessionData.session) {
     return [];
   }
   
-  const { data, error } = await supabase
+  let query = supabase
     .from("journal_entries")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*");
+  
+  // If a date is provided, filter by that date
+  if (date) {
+    // Convert date to ISO string and match the date part only
+    const dateStr = date.toISOString().split('T')[0];
+    query = query.filter('entry_date', 'gte', `${dateStr}T00:00:00.000Z`)
+                .filter('entry_date', 'lt', `${dateStr}T23:59:59.999Z`);
+  }
+  
+  const { data, error } = await query.order("created_at", { ascending: false });
 
   if (error) throw error;
   return data as JournalEntry[];
