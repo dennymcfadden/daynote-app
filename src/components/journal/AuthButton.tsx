@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { Download, LogOut, User } from "lucide-react";
+import { downloadJournalEntriesAsCsv } from "@/utils/csvExport";
 
 export const AuthButton = () => {
   const { user, signOut } = useAuth();
@@ -28,6 +29,23 @@ export const AuthButton = () => {
       localStorage.removeItem("supabase.auth.token");
       navigate("/");
       // Removed the toast for sign out after error
+    }
+  };
+
+  const handleDownloadEntries = async () => {
+    try {
+      await downloadJournalEntriesAsCsv();
+      toast({
+        title: "Download Started",
+        description: "Your journal entries are being downloaded as a CSV file."
+      });
+    } catch (error) {
+      console.error("Error downloading entries:", error);
+      toast({
+        title: "Download Failed",
+        description: "There was a problem downloading your journal entries.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -62,6 +80,13 @@ export const AuthButton = () => {
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
           <User className="h-4 w-4" />
           <span>Account</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          className="flex items-center gap-2 cursor-pointer" 
+          onClick={handleDownloadEntries}
+        >
+          <Download className="h-4 w-4" />
+          <span>Export CSV</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
