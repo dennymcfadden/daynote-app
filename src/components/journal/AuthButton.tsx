@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { MessageCircleQuestion } from "lucide-react";
+import { MessageCircleQuestion, DoorOpen } from "lucide-react";
 import { FeedbackDialog } from "./FeedbackDialog";
 
 export const AuthButton = () => {
@@ -44,8 +44,9 @@ export const AuthButton = () => {
         variant="ghost" 
         className="text-sm"
         onClick={handleSignOut}
+        aria-label="Sign Out"
       >
-        Sign Out
+        <DoorOpen className="w-4 h-4" />
       </Button>
       
       <FeedbackDialog 
