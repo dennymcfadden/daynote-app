@@ -57,8 +57,8 @@ export const AuthButton = () => {
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          width="16" 
-          height="16" 
+          width="24" // Increased from 16 by 50%
+          height="24" // Increased from 16 by 50%
           viewBox="0 0 24 24" 
           fill="none" 
           stroke="currentColor" 
@@ -77,7 +77,7 @@ export const AuthButton = () => {
         onClick={handleSignOut}
         aria-label="Sign Out"
       >
-        <DoorOpen className="w-4 h-4" />
+        <DoorOpen className="w-6 h-6" /> {/* Increased from w-4 h-4 by 50% */}
       </Button>
       
       <FeedbackDialog 

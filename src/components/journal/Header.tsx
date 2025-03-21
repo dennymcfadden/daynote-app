@@ -8,7 +8,7 @@ export const Header = () => {
         <img 
           src="/lovable-uploads/0f6d6781-8b08-4247-b881-2f68e9e04791.png" 
           alt="DayNote Logo" 
-          className="h-8" 
+          className="h-5.5" // Decreased from h-8 by approximately 30%
         />
       </div>
       <AuthButton />
