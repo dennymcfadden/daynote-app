@@ -86,10 +86,6 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
             />
           </div>
           
-          <div className="text-xs text-muted-foreground">
-            <p>Your feedback will include browser & device information.</p>
-          </div>
-          
           <DialogFooter className="sm:justify-end">
             <Button
               type="button"
