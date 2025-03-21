@@ -5,15 +5,33 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { DoorOpen } from "lucide-react";
 import { FeedbackDialog } from "./FeedbackDialog";
+import { useToast } from "@/hooks/use-toast";
 
 export const AuthButton = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
+    try {
+      await signOut();
+      // Force navigation regardless of signOut success
+      navigate("/");
+      toast({
+        title: "Signed out",
+        description: "You have been signed out successfully",
+      });
+    } catch (error) {
+      console.error("Error in handleSignOut:", error);
+      // Even if there's an error, clear local state and redirect
+      localStorage.removeItem("supabase.auth.token");
+      navigate("/");
+      toast({
+        title: "Signed out",
+        description: "You have been signed out",
+      });
+    }
   };
 
   if (!user) {
