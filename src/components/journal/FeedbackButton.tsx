@@ -16,7 +16,7 @@ export const FeedbackButton = () => {
         aria-label="Report Issue"
       >
         <img 
-          src="/lovable-uploads/018ce2dd-c1d2-4b7e-a4ab-e361246268d9.png" 
+          src="/lovable-uploads/fa77c486-f78e-403d-90fa-a997547163cf.png" 
           alt="Feedback" 
           className="w-7 h-7"
         />
