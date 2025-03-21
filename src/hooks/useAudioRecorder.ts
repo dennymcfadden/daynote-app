@@ -81,9 +81,17 @@ export const useAudioRecorder = () => {
       mediaRecorder.start();
       setIsRecording(true);
       
+      // Reset recording time and set up the timer to increment it every second
       setRecordingTime(0);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      
       timerRef.current = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
+        setRecordingTime((prevTime) => {
+          console.log("Incrementing recording time to:", prevTime + 1);
+          return prevTime + 1;
+        });
       }, 1000);
       
       // Update permission state
