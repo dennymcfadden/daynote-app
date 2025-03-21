@@ -5,6 +5,7 @@ import { transcribeAudio } from "@/services/journalService";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export const useAudioRecorder = () => {
+  const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [transcription, setTranscription] = useState("");
@@ -26,6 +27,17 @@ export const useAudioRecorder = () => {
       }
     };
   }, [isRecording]);
+
+  // Effect to automatically stop recording when reaching the time limit
+  useEffect(() => {
+    if (isRecording && recordingTime >= MAX_RECORDING_TIME) {
+      stopRecording();
+      toast({
+        title: "Recording complete",
+        description: "Maximum recording time reached.",
+      });
+    }
+  }, [recordingTime, isRecording]);
 
   const startRecording = async () => {
     audioChunksRef.current = [];
