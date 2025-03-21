@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { DoorOpen } from "lucide-react";
+import { Heart, DoorOpen } from "lucide-react";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,7 +15,6 @@ export const AuthButton = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      // Force navigation regardless of signOut success
       navigate("/");
       toast({
         title: "Signed out",
@@ -24,7 +22,6 @@ export const AuthButton = () => {
       });
     } catch (error) {
       console.error("Error in handleSignOut:", error);
-      // Even if there's an error, clear local state and redirect
       localStorage.removeItem("supabase.auth.token");
       navigate("/");
       toast({
@@ -52,32 +49,19 @@ export const AuthButton = () => {
         variant="ghost" 
         size="sm"
         onClick={() => setFeedbackOpen(true)}
-        className="text-sm flex items-center gap-1"
+        className="p-1 h-auto"
         aria-label="Report Issue"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="24" // Increased from 16 by 50%
-          height="24" // Increased from 16 by 50%
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-        >
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-          <path d="m12 13-1-1 2-2-3-3 2-2" />
-        </svg>
+        <Heart className="w-7 h-7" />
       </Button>
       
       <Button 
         variant="ghost" 
-        className="text-sm"
+        className="p-1 h-auto text-sm"
         onClick={handleSignOut}
         aria-label="Sign Out"
       >
-        <DoorOpen className="w-6 h-6" /> {/* Increased from w-4 h-4 by 50% */}
+        <DoorOpen className="w-7 h-7" />
       </Button>
       
       <FeedbackDialog 
