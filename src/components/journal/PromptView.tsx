@@ -30,7 +30,7 @@ export const PromptView: React.FC<PromptViewProps> = ({
             <Button
               variant="outline"
               className={cn(
-                "justify-center text-center font-normal",
+                "justify-center text-center font-normal mx-2",
                 isMobile ? "w-full" : "w-[240px]"
               )}
             >
@@ -48,7 +48,10 @@ export const PromptView: React.FC<PromptViewProps> = ({
         </Popover>
       </div>
       
-      <section className="flex flex-col items-center gap-7 w-full px-0 cursor-pointer py-[100px]">
+      <section className={cn(
+        "flex flex-col items-center gap-7 w-full px-0 cursor-pointer",
+        isMobile ? "py-[25px]" : "py-[100px]"
+      )}>
         <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-12 items-center`}>
           <div className="flex flex-col items-center cursor-pointer" onClick={onStartRecording} aria-label="Click to start voice journaling">
             <img src="/lovable-uploads/27d42274-817b-49d7-8fbf-636a3b843171.png" alt="Microphone" className="w-32 h-32" />
