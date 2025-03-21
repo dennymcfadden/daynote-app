@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { Heart } from "lucide-react";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,7 +52,11 @@ export const AuthButton = () => {
         className="p-1 h-auto"
         aria-label="Report Issue"
       >
-        <Heart className="w-7 h-7" />
+        <img 
+          src="/lovable-uploads/018ce2dd-c1d2-4b7e-a4ab-e361246268d9.png" 
+          alt="Feedback" 
+          className="w-7 h-7"
+        />
       </Button>
       
       <Button 
