@@ -6,6 +6,7 @@ import { JournalEntry } from "./JournalEntry";
 import { getJournalEntries, deleteJournalEntry, updateJournalEntry, type JournalEntry as JournalEntryType } from "@/services/journalService";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface JournalEntriesProps {
   selectedDate?: Date;
@@ -13,27 +14,48 @@ interface JournalEntriesProps {
 
 export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) => {
   const [entries, setEntries] = useState<JournalEntryType[]>([]);
+  const [filteredEntries, setFilteredEntries] = useState<JournalEntryType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { handleError } = useErrorHandler();
 
   const fetchEntries = async () => {
     if (!user) return;
     setIsLoading(true);
     try {
-      const data = await getJournalEntries(selectedDate);
+      // Fetch all entries without filtering by date on the server
+      const data = await getJournalEntries();
       setEntries(data);
+      
+      // If a date is selected, filter entries by month and day on the client side
+      if (selectedDate) {
+        filterEntriesByMonthAndDay(data, selectedDate);
+      } else {
+        setFilteredEntries(data);
+      }
     } catch (error) {
       console.error("Error fetching journal entries:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load journal entries",
-        variant: "destructive"
-      });
+      handleError("Fetching Entries", error);
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  // Filter entries by month and day, ignoring the year
+  const filterEntriesByMonthAndDay = (allEntries: JournalEntryType[], date: Date) => {
+    const month = date.getMonth(); // 0-indexed month
+    const day = date.getDate();
+    
+    const filtered = allEntries.filter(entry => {
+      if (!entry.entry_date) return false;
+      
+      const entryDate = new Date(entry.entry_date);
+      return entryDate.getMonth() === month && entryDate.getDate() === day;
+    });
+    
+    setFilteredEntries(filtered);
   };
 
   useEffect(() => {
@@ -41,43 +63,61 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
       fetchEntries();
     } else {
       setEntries([]);
+      setFilteredEntries([]);
       setIsLoading(false);
     }
-  }, [user, selectedDate]);
+  }, [user]);
+  
+  // When selected date changes, filter the existing entries
+  useEffect(() => {
+    if (selectedDate && entries.length > 0) {
+      filterEntriesByMonthAndDay(entries, selectedDate);
+    } else if (!selectedDate) {
+      setFilteredEntries(entries);
+    }
+  }, [selectedDate, entries]);
 
   const handleDelete = async (id: string) => {
     try {
       await deleteJournalEntry(id);
-      setEntries(entries.filter(entry => entry.id !== id));
+      const updatedEntries = entries.filter(entry => entry.id !== id);
+      setEntries(updatedEntries);
+      
+      // Update filtered entries too
+      if (selectedDate) {
+        filterEntriesByMonthAndDay(updatedEntries, selectedDate);
+      } else {
+        setFilteredEntries(updatedEntries);
+      }
+      
       toast({
         title: "Entry Deleted",
         description: "Your journal entry has been deleted"
       });
     } catch (error) {
-      console.error("Error deleting entry:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete journal entry",
-        variant: "destructive"
-      });
+      handleError("Deleting Entry", error);
     }
   };
 
   const handleEdit = async (id: string, content: string) => {
     try {
       const updatedEntry = await updateJournalEntry(id, content);
-      setEntries(entries.map(entry => entry.id === id ? updatedEntry : entry));
+      const updatedEntries = entries.map(entry => entry.id === id ? updatedEntry : entry);
+      setEntries(updatedEntries);
+      
+      // Update filtered entries too
+      if (selectedDate) {
+        filterEntriesByMonthAndDay(updatedEntries, selectedDate);
+      } else {
+        setFilteredEntries(updatedEntries);
+      }
+      
       toast({
         title: "Entry Updated",
         description: "Your journal entry has been updated"
       });
     } catch (error) {
-      console.error("Error updating entry:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update journal entry",
-        variant: "destructive"
-      });
+      handleError("Updating Entry", error);
     }
   };
 
@@ -98,7 +138,7 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
       </div>;
   }
 
-  if (entries.length === 0) {
+  if (filteredEntries.length === 0) {
     return <div className="text-center py-12 text-muted-foreground">
         {selectedDate ? 
           `No entries for this day across any year.` : 
@@ -114,7 +154,7 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
   return <section className="w-full max-w-4xl mx-auto px-4">
       <h2 className="text-xl font-semibold mb-4">{formattedDate}:</h2>
       <div className="space-y-4">
-        {entries.map(entry => <JournalEntry 
+        {filteredEntries.map(entry => <JournalEntry 
           key={entry.id} 
           id={entry.id} 
           content={entry.content} 

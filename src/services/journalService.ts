@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -30,33 +29,17 @@ export const saveJournalEntry = async (content: string, entryDate: Date = new Da
   return data as JournalEntry;
 };
 
-export const getJournalEntries = async (date?: Date) => {
+export const getJournalEntries = async () => {
   const { data: sessionData } = await supabase.auth.getSession();
   if (!sessionData.session) {
     return [];
   }
   
-  let query = supabase
+  const { data, error } = await supabase
     .from("journal_entries")
     .select("*")
-    .filter('user_id', 'eq', sessionData.session.user.id);
-  
-  // If a date is provided, filter by month and day only (ignoring the year)
-  if (date) {
-    const month = date.getMonth() + 1; // JavaScript months are 0-indexed
-    const day = date.getDate();
-    
-    // Using simpler string matching for month and day
-    const monthStr = month.toString().padStart(2, '0');
-    const dayStr = day.toString().padStart(2, '0');
-    const monthDayPattern = `-${monthStr}-${dayStr}`; // Matches YYYY-MM-DD where MM-DD matches
-    
-    query = query
-      .filter('entry_date', 'not.is', null)
-      .ilike('entry_date', `%${monthDayPattern}%`);
-  }
-  
-  const { data, error } = await query.order("entry_date", { ascending: false });
+    .filter('user_id', 'eq', sessionData.session.user.id)
+    .order("entry_date", { ascending: false });
 
   if (error) throw error;
   return data as JournalEntry[];
