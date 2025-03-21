@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -18,7 +17,12 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
   showPermissionPrompt
 }) => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
-  const remainingTime = MAX_RECORDING_TIME - recordingTime;
+  const [remainingTime, setRemainingTime] = useState(MAX_RECORDING_TIME - recordingTime);
+  
+  // Update remaining time whenever recordingTime changes
+  useEffect(() => {
+    setRemainingTime(MAX_RECORDING_TIME - recordingTime);
+  }, [recordingTime]);
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
