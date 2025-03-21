@@ -43,7 +43,7 @@ export const AuthButton = () => {
       aria-label="Sign Out"
     >
       <img 
-        src="/lovable-uploads/1c745cb2-0f96-41f3-8dee-fb18fdbc4719.png" 
+        src="/lovable-uploads/58091e9c-49b5-4654-8908-6b405eb05e05.png" 
         alt="Sign Out" 
         className="w-7 h-7"
       />
