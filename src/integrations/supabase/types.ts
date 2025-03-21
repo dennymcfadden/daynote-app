@@ -54,6 +54,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_feedback: {
+        Row: {
+          browser_info: string
+          created_at: string
+          device_info: string
+          email: string
+          id: string
+          message: string
+          user_id: string | null
+        }
+        Insert: {
+          browser_info: string
+          created_at?: string
+          device_info: string
+          email: string
+          id?: string
+          message: string
+          user_id?: string | null
+        }
+        Update: {
+          browser_info?: string
+          created_at?: string
+          device_info?: string
+          email?: string
+          id?: string
+          message?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       waitlist: {
         Row: {
           created_at: string
