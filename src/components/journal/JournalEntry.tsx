@@ -53,12 +53,14 @@ export const JournalEntry: React.FC<JournalEntryProps> = ({
               size="sm"
               variant="outline"
               onClick={handleCancel}
+              className="text-xs px-2 py-1 h-auto"
             >
               Cancel
             </Button>
             <Button
               size="sm"
               onClick={handleSave}
+              className="text-xs px-2 py-1 h-auto"
             >
               Save
             </Button>
@@ -69,6 +71,7 @@ export const JournalEntry: React.FC<JournalEntryProps> = ({
               size="sm"
               variant="outline"
               onClick={() => setIsEditing(true)}
+              className="text-xs px-2 py-1 h-auto"
             >
               Edit
             </Button>
@@ -76,6 +79,7 @@ export const JournalEntry: React.FC<JournalEntryProps> = ({
               size="sm"
               variant="outline"
               onClick={onDelete}
+              className="text-xs px-2 py-1 h-auto"
             >
               Delete
             </Button>
