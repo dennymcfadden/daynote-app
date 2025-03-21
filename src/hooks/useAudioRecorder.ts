@@ -1,50 +1,34 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { transcribeAudio } from "@/services/journalService";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useAudioPermission } from "@/hooks/useAudioPermission";
+import { useTranscriptionState } from "@/hooks/useTranscriptionState";
+import { getOptimalAudioConfig, getAudioConstraints } from "@/utils/mediaRecorderUtils";
 
 export const useAudioRecorder = () => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [transcription, setTranscription] = useState("");
-  const [isTranscribing, setIsTranscribing] = useState(false);
-  const [permissionState, setPermissionState] = useState<PermissionState | null>(null);
-  const [showPermissionPrompt, setShowPermissionPrompt] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
-  const { handleError } = useErrorHandler();
 
-  // Check for microphone permission status on component mount
-  useEffect(() => {
-    const checkPermission = async () => {
-      try {
-        // Check if the browser supports permissions API
-        if (navigator.permissions && navigator.permissions.query) {
-          const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });
-          setPermissionState(permissionStatus.state);
-          
-          // Listen for permission changes
-          permissionStatus.onchange = () => {
-            setPermissionState(permissionStatus.state);
-            
-            // Hide the prompt if permission is granted
-            if (permissionStatus.state === 'granted') {
-              setShowPermissionPrompt(false);
-            }
-          };
-        }
-      } catch (error) {
-        console.log("Permission check not supported:", error);
-      }
-    };
-    
-    checkPermission();
-  }, []);
+  const {
+    permissionState,
+    showPermissionPrompt,
+    setShowPermissionPrompt,
+    updatePermissionState
+  } = useAudioPermission();
+
+  const {
+    transcription,
+    setTranscription,
+    isTranscribing,
+    processAudioForTranscription,
+    resetTranscription
+  } = useTranscriptionState();
 
   useEffect(() => {
     return () => {
@@ -72,36 +56,15 @@ export const useAudioRecorder = () => {
     audioChunksRef.current = [];
     
     try {
-      // On iOS, we need to be more direct with the constraints
-      const constraints = {
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      };
+      const constraints = getAudioConstraints();
       
       console.log("Requesting microphone access with constraints:", constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
-      // Determine the best MIME type for the browser
-      let mimeType = 'audio/webm';
-      const options: MediaRecorderOptions = {};
-      
-      // Check if the browser supports the preferred MIME type
-      if (MediaRecorder.isTypeSupported('audio/webm')) {
-        options.mimeType = 'audio/webm';
-      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-        options.mimeType = 'audio/mp4';
-        mimeType = 'audio/mp4';
-      } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
-        options.mimeType = 'audio/ogg';
-        mimeType = 'audio/ogg';
-      }
-      
+      const { mimeType, options } = getOptimalAudioConfig();
       console.log(`Using MIME type: ${options.mimeType || 'default'}`);
-      const mediaRecorder = new MediaRecorder(stream, options);
       
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       
       mediaRecorder.ondataavailable = (event) => {
@@ -111,18 +74,8 @@ export const useAudioRecorder = () => {
       };
       
       mediaRecorder.onstop = async () => {
-        try {
-          const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-          console.log("Recording complete, audio blob size:", audioBlob.size, "type:", audioBlob.type);
-          setIsTranscribing(true);
-          
-          const transcribedText = await transcribeAudio(audioBlob);
-          setTranscription(transcribedText);
-        } catch (error) {
-          handleError("Transcription", error);
-        } finally {
-          setIsTranscribing(false);
-        }
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        await processAudioForTranscription(audioBlob, mimeType);
       };
       
       mediaRecorder.start();
@@ -133,11 +86,8 @@ export const useAudioRecorder = () => {
         setRecordingTime((prev) => prev + 1);
       }, 1000);
       
-      // Update permission state if possible
-      if (navigator.permissions && navigator.permissions.query) {
-        const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });
-        setPermissionState(permissionStatus.state);
-      }
+      // Update permission state
+      await updatePermissionState();
       
       // Hide the permission prompt if we got this far
       setShowPermissionPrompt(false);
@@ -172,7 +122,7 @@ export const useAudioRecorder = () => {
         }
       }
       
-      handleError("Microphone", new Error(errorMessage));
+      throw new Error(errorMessage);
     }
   };
 
@@ -188,10 +138,6 @@ export const useAudioRecorder = () => {
         timerRef.current = null;
       }
     }
-  };
-
-  const resetTranscription = () => {
-    setTranscription("");
   };
 
   return {
