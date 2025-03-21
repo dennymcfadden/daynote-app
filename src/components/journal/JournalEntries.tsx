@@ -29,11 +29,12 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
       const data = await getJournalEntries();
       setEntries(data);
       
-      // If a date is selected, filter entries by month and day on the client side
+      // Always filter entries by month and day on the client side if selectedDate is provided
       if (selectedDate) {
         filterEntriesByMonthAndDay(data, selectedDate);
       } else {
-        setFilteredEntries(data);
+        // If no date is selected, don't show any entries
+        setFilteredEntries([]);
       }
     } catch (error) {
       console.error("Error fetching journal entries:", error);
@@ -73,7 +74,8 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
     if (selectedDate && entries.length > 0) {
       filterEntriesByMonthAndDay(entries, selectedDate);
     } else if (!selectedDate) {
-      setFilteredEntries(entries);
+      // If no date is selected, don't show any entries
+      setFilteredEntries([]);
     }
   }, [selectedDate, entries]);
 
@@ -142,17 +144,17 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
     return <div className="text-center py-12 text-muted-foreground">
         {selectedDate ? 
           `No entries for this day across any year.` : 
-          "No entries yet."}
+          "Please select a date to view entries."}
       </div>;
   }
 
   // Format the date to show month and day only
   const formattedDate = selectedDate ? 
     selectedDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) + " (across all years)" : 
-    "All entries";
+    "";
 
   return <section className="w-full max-w-4xl mx-auto px-4">
-      <h2 className="text-xl font-semibold mb-4">{formattedDate}:</h2>
+      <h2 className="text-xl font-semibold mb-4">{formattedDate}</h2>
       <div className="space-y-4">
         {filteredEntries.map(entry => <JournalEntry 
           key={entry.id} 
