@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Keyboard } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface PromptViewProps {
   onStartRecording: () => void;
@@ -11,10 +11,12 @@ export const PromptView: React.FC<PromptViewProps> = ({
   onStartRecording,
   onStartTyping 
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="flex flex-col items-center w-full">
       <section className="flex flex-col items-center gap-7 w-full px-0 py-[100px] cursor-pointer">
-        <div className="flex gap-12 items-center">
+        <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-12 items-center`}>
           <div 
             className="flex flex-col items-center cursor-pointer"
             onClick={onStartRecording}
@@ -23,7 +25,7 @@ export const PromptView: React.FC<PromptViewProps> = ({
             <img 
               src="/lovable-uploads/27d42274-817b-49d7-8fbf-636a3b843171.png" 
               alt="Microphone" 
-              className="w-16 h-16"
+              className="w-32 h-32"
             />
           </div>
           
@@ -35,7 +37,7 @@ export const PromptView: React.FC<PromptViewProps> = ({
             <img 
               src="/lovable-uploads/3d5db38b-8b2f-4386-abe0-6b81f61bafc4.png" 
               alt="Keyboard" 
-              className="w-16 h-16"
+              className="w-32 h-32"
             />
           </div>
         </div>
