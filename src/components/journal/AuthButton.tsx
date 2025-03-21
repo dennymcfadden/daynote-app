@@ -3,13 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export const AuthButton = () => {
   const { user, signOut } = useAuth();
@@ -24,7 +18,7 @@ export const AuthButton = () => {
     return (
       <Button 
         variant="outline"
-        onClick={() => navigate("/auth")}
+        onClick={() => navigate("/")}
         className="text-sm"
       >
         Sign In
@@ -33,22 +27,13 @@ export const AuthButton = () => {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          className="px-2"
-          size="sm"
-        >
-          <User className="h-4 w-4 mr-2" />
-          <span className="max-w-32 truncate">{user.email}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleSignOut}>
-          <LogOut className="h-4 w-4 mr-2" /> Sign Out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button 
+      variant="ghost" 
+      className="text-sm flex items-center gap-2"
+      onClick={handleSignOut}
+    >
+      <LogOut className="h-4 w-4" /> 
+      Sign Out
+    </Button>
   );
 };
