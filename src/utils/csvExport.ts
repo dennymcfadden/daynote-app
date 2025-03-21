@@ -5,8 +5,8 @@ import { getJournalEntries, type JournalEntry } from "@/services/journalService"
  * Formats journal entries into CSV format
  */
 const formatEntriesAsCsv = (entries: JournalEntry[]): string => {
-  // Define the CSV headers
-  const headers = ["Date", "Content", "Created At", "Updated At"];
+  // Define the CSV headers - only include Date and Content
+  const headers = ["Date", "Content"];
   
   // Format the headers row
   let csvContent = headers.join(",") + "\n";
@@ -21,12 +21,8 @@ const formatEntriesAsCsv = (entries: JournalEntry[]): string => {
     // Escape content to handle commas and quotes in the text
     const escapedContent = `"${entry.content.replace(/"/g, '""')}"`;
     
-    // Format the timestamps
-    const createdAt = new Date(entry.created_at).toLocaleString();
-    const updatedAt = new Date(entry.updated_at).toLocaleString();
-    
-    // Add the row to the CSV
-    csvContent += [entryDate, escapedContent, createdAt, updatedAt].join(",") + "\n";
+    // Add the row to the CSV (only date and content)
+    csvContent += [entryDate, escapedContent].join(",") + "\n";
   });
   
   return csvContent;
