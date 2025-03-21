@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -151,9 +152,8 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
           id={entry.id} 
           content={entry.content} 
           date={entry.entry_date ? 
-            new Date(entry.entry_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) + 
-            ' at ' + new Date(entry.entry_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
-            new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
+            new Date(entry.entry_date).getFullYear().toString() : 
+            new Date(entry.created_at).getFullYear().toString()} 
           onDelete={() => handleDelete(entry.id)} 
           onEdit={content => handleEdit(entry.id, content)} 
         />)}
