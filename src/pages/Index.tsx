@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +10,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Header } from "@/components/journal/Header";
 import { useAuth } from "@/hooks/useAuth";
-import { DateSelector } from "@/components/journal/DateSelector";
 import { JournalPrompt } from "@/components/journal/JournalPrompt";
 import { JournalEntries } from "@/components/journal/JournalEntries";
 
@@ -41,7 +39,6 @@ const Index = () => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        // Sign up the user
         const { error } = await supabase.auth.signUp({
           email: values.email,
           password: values.password,
@@ -54,7 +51,6 @@ const Index = () => {
           description: "Please check your email to verify your account",
         });
       } else {
-        // Sign in the user
         const { error } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password,
@@ -78,7 +74,6 @@ const Index = () => {
     }
   };
 
-  // If user is authenticated, show the journal app
   if (user) {
     return (
       <>
@@ -88,7 +83,6 @@ const Index = () => {
         />
         <main className="flex flex-col items-center gap-12 min-h-screen w-full bg-[#F3EFEC] px-0 py-6">
           <Header />
-          <DateSelector />
           <JournalPrompt />
           <JournalEntries />
         </main>
@@ -96,7 +90,6 @@ const Index = () => {
     );
   }
 
-  // If not authenticated, show the auth form
   return (
     <main className="flex justify-center items-center min-h-screen bg-[#F3EFEC] p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
