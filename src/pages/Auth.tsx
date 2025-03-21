@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,11 +42,6 @@ const Auth = () => {
         });
         
         if (error) throw error;
-        
-        toast({
-          title: "Account created",
-          description: "Please check your email to verify your account",
-        });
       } else {
         // Sign in the user
         const { error } = await supabase.auth.signInWithPassword({
@@ -56,11 +50,6 @@ const Auth = () => {
         });
         
         if (error) throw error;
-        
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in",
-        });
         
         navigate("/");
       }
