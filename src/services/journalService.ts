@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -38,22 +37,18 @@ export const getJournalEntries = async (date?: Date) => {
   
   let query = supabase
     .from("journal_entries")
-    .select("*");
+    .select("*")
+    .filter('user_id', 'eq', sessionData.session.user.id);
   
   // If a date is provided, filter by month and day only (ignoring the year)
   if (date) {
     const month = date.getMonth() + 1; // JavaScript months are 0-indexed
     const day = date.getDate();
     
-    // Using PostgreSQL's EXTRACT function to get month and day from entry_date
+    // Use proper Supabase filtering with .eq() instead of raw SQL
     query = query
-      .filter('user_id', 'eq', sessionData.session.user.id)
       .filter('entry_date', 'not.is', null)
-      .filter(
-        `extract(month from entry_date) = ${month} and extract(day from entry_date) = ${day}`
-      );
-  } else {
-    query = query.filter('user_id', 'eq', sessionData.session.user.id);
+      .or(`extract(month from entry_date).eq.${month},extract(day from entry_date).eq.${day}`);
   }
   
   const { data, error } = await query.order("entry_date", { ascending: false });
