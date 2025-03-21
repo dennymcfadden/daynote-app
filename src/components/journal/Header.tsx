@@ -1,10 +1,16 @@
+
 import React from "react";
 import { AuthButton } from "./AuthButton";
+import { FeedbackButton } from "./FeedbackButton";
+
 export const Header = () => {
-  return <header className="flex justify-between items-center w-full px-6 py-3 bg-transparent">
-      <div className="flex items-center">
+  return (
+    <header className="flex justify-between items-center w-full px-6 py-3 bg-transparent">
+      <FeedbackButton />
+      <div className="absolute left-1/2 transform -translate-x-1/2">
         <img src="/lovable-uploads/0f6d6781-8b08-4247-b881-2f68e9e04791.png" alt="DayNote Logo" className="h-6" />
       </div>
       <AuthButton />
-    </header>;
+    </header>
+  );
 };
