@@ -4,6 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User } from "lucide-react";
 
 export const AuthButton = () => {
   const { user, signOut } = useAuth();
@@ -36,17 +44,34 @@ export const AuthButton = () => {
   }
 
   return (
-    <Button 
-      variant="ghost" 
-      className="p-1 h-auto text-sm"
-      onClick={handleSignOut}
-      aria-label="Sign Out"
-    >
-      <img 
-        src="/lovable-uploads/58091e9c-49b5-4654-8908-6b405eb05e05.png" 
-        alt="Sign Out" 
-        className="w-7 h-7"
-      />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="ghost" 
+          className="p-1 h-auto"
+          aria-label="Account Options"
+        >
+          <img 
+            src="/lovable-uploads/58091e9c-49b5-4654-8908-6b405eb05e05.png" 
+            alt="Account" 
+            className="w-7 h-7"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+          <User className="h-4 w-4" />
+          <span>Account</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem 
+          className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive" 
+          onClick={handleSignOut}
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
