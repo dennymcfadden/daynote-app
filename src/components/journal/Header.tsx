@@ -20,7 +20,7 @@ export const Header = () => {
             alt="Calendar" 
             className="w-7 h-7 text-primary" 
           />
-          <span className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
+          <span className="absolute top-[56%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
             {currentDay}
           </span>
         </div>
