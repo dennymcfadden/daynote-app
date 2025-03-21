@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,22 +13,22 @@ import { Header } from "@/components/journal/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { JournalPrompt } from "@/components/journal/JournalPrompt";
 import { JournalEntries } from "@/components/journal/JournalEntries";
+
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters")
 });
+
 type AuthFormValues = z.infer<typeof authSchema>;
+
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
+
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -35,6 +36,7 @@ const Index = () => {
       password: ""
     }
   });
+
   const forgotPasswordForm = useForm({
     resolver: zodResolver(z.object({
       email: z.string().email("Please enter a valid email address")
@@ -43,30 +45,37 @@ const Index = () => {
       email: ""
     }
   });
+
   const onSubmit = async (values: AuthFormValues) => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const {
-          error
-        } = await supabase.auth.signUp({
+        const { error, data } = await supabase.auth.signUp({
           email: values.email,
-          password: values.password
+          password: values.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            // Removing email verification by setting data.user directly through signup
+          }
         });
+        
         if (error) throw error;
-        toast({
-          title: "Account created",
-          description: "Please check your email to verify your account"
-        });
+        
+        // Sign in automatically after signup instead of waiting for email verification
+        if (data.user) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: values.email,
+            password: values.password
+          });
+          
+          if (signInError) throw signInError;
+        }
       } else {
-        const {
-          error
-        } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password
         });
         if (error) throw error;
-        // Removed the toast for successful sign in
       }
     } catch (error: any) {
       toast({
@@ -78,14 +87,13 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
   const handleForgotPassword = async (values: {
     email: string;
   }) => {
     setIsLoading(true);
     try {
-      const {
-        error
-      } = await supabase.auth.resetPasswordForEmail(values.email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
         redirectTo: `${window.location.origin}/`
       });
       if (error) throw error;
@@ -106,6 +114,7 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
   if (user) {
     return <>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
@@ -116,6 +125,7 @@ const Index = () => {
         </main>
       </>;
   }
+
   return <main className="flex justify-center items-center min-h-screen bg-[#F3EFEC] p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
@@ -186,4 +196,5 @@ const Index = () => {
       </div>
     </main>;
 };
+
 export default Index;
