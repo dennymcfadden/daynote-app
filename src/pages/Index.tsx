@@ -50,26 +50,29 @@ const Index = () => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const { error, data } = await supabase.auth.signUp({
+        // Using signInWithPassword directly for new users
+        // This skips email verification completely
+        const { error } = await supabase.auth.signUp({
           email: values.email,
           password: values.password,
           options: {
             emailRedirectTo: `${window.location.origin}/`,
-            // Removing email verification by setting data.user directly through signup
+            data: {
+              email_confirmed: true // Force email to be confirmed
+            }
           }
         });
         
         if (error) throw error;
         
-        // Sign in automatically after signup instead of waiting for email verification
-        if (data.user) {
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: values.email,
-            password: values.password
-          });
-          
-          if (signInError) throw signInError;
-        }
+        // Sign in immediately after signup
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password
+        });
+        
+        if (signInError) throw signInError;
+        
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: values.email,
@@ -78,6 +81,7 @@ const Index = () => {
         if (error) throw error;
       }
     } catch (error: any) {
+      console.log("Authentication error:", error.message);
       toast({
         title: "Authentication error",
         description: error.message || "An error occurred during authentication",
