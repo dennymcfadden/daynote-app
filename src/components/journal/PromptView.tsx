@@ -12,13 +12,11 @@ export const PromptView: React.FC<PromptViewProps> = ({ onStartRecording }) => {
       onClick={onStartRecording}
       aria-label="Click to start voice journaling"
     >
-      <div className="w-24 h-24 rounded-3xl flex items-center justify-center bg-[#E9E3E2]">
-        <img 
-          src="/lovable-uploads/27d42274-817b-49d7-8fbf-636a3b843171.png" 
-          alt="Microphone" 
-          className="w-12 h-12"
-        />
-      </div>
+      <img 
+        src="/lovable-uploads/27d42274-817b-49d7-8fbf-636a3b843171.png" 
+        alt="Microphone" 
+        className="w-36 h-36" // Changed from w-12 h-12 (3x larger)
+      />
     </section>
   );
 };
