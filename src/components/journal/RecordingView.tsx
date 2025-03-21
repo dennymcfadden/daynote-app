@@ -66,25 +66,14 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
         <div className="w-16 h-16 rounded-full bg-red-500 animate-pulse"></div>
       </div>
       
-      <div className="text-lg font-medium mt-2">
+      <div className="text-2xl font-medium mt-4">
         {formatTime(remainingTime)}
-      </div>
-      
-      <div className="w-full max-w-xs bg-gray-200 rounded-full h-2.5 mt-2">
-        <div 
-          className="bg-red-500 h-2.5 rounded-full transition-all duration-300" 
-          style={{ width: `${(recordingTime / MAX_RECORDING_TIME) * 100}%` }}
-        ></div>
-      </div>
-
-      <div className="text-sm text-gray-500 mt-1">
-        {Math.floor((recordingTime / MAX_RECORDING_TIME) * 100)}% recorded
       </div>
       
       <Button 
         variant="outline" 
         onClick={onStopRecording}
-        className="mt-4"
+        className="mt-6"
       >
         Stop Recording
       </Button>
