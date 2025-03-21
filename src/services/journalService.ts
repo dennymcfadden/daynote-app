@@ -40,15 +40,23 @@ export const getJournalEntries = async (date?: Date) => {
     .from("journal_entries")
     .select("*");
   
-  // If a date is provided, filter by that date
+  // If a date is provided, filter by month and day only (ignoring the year)
   if (date) {
-    // Convert date to ISO string and match the date part only
-    const dateStr = date.toISOString().split('T')[0];
-    query = query.filter('entry_date', 'gte', `${dateStr}T00:00:00.000Z`)
-                .filter('entry_date', 'lt', `${dateStr}T23:59:59.999Z`);
+    const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+    const day = date.getDate();
+    
+    // Using PostgreSQL's EXTRACT function to get month and day from entry_date
+    query = query
+      .filter('user_id', 'eq', sessionData.session.user.id)
+      .filter('entry_date', 'not.is', null)
+      .filter(
+        `extract(month from entry_date) = ${month} and extract(day from entry_date) = ${day}`
+      );
+  } else {
+    query = query.filter('user_id', 'eq', sessionData.session.user.id);
   }
   
-  const { data, error } = await query.order("created_at", { ascending: false });
+  const { data, error } = await query.order("entry_date", { ascending: false });
 
   if (error) throw error;
   return data as JournalEntry[];

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -100,14 +101,15 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
   if (entries.length === 0) {
     return <div className="text-center py-12 text-muted-foreground">
         {selectedDate ? 
-          `No entries for ${selectedDate.toLocaleDateString()}.` : 
+          `No entries for this day across any year.` : 
           "No entries yet."}
       </div>;
   }
 
+  // Format the date to show month and day only
   const formattedDate = selectedDate ? 
-    selectedDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : 
-    "On this day";
+    selectedDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) + " (across all years)" : 
+    "All entries";
 
   return <section className="w-full max-w-4xl mx-auto px-4">
       <h2 className="text-xl font-semibold mb-4">{formattedDate}:</h2>
@@ -116,7 +118,10 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
           key={entry.id} 
           id={entry.id} 
           content={entry.content} 
-          date={new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
+          date={entry.entry_date ? 
+            new Date(entry.entry_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) + 
+            ' at ' + new Date(entry.entry_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
+            new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
           onDelete={() => handleDelete(entry.id)} 
           onEdit={content => handleEdit(entry.id, content)} 
         />)}
