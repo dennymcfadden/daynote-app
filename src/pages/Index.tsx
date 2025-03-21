@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,10 +58,7 @@ const Index = () => {
           password: values.password
         });
         if (error) throw error;
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in"
-        });
+        // Removed the toast for successful sign in
       }
     } catch (error: any) {
       toast({

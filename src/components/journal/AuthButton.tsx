@@ -16,18 +16,12 @@ export const AuthButton = () => {
     try {
       await signOut();
       navigate("/");
-      toast({
-        title: "Signed out",
-        description: "You have been signed out successfully",
-      });
+      // Removed the toast for successful sign out
     } catch (error) {
       console.error("Error in handleSignOut:", error);
       localStorage.removeItem("supabase.auth.token");
       navigate("/");
-      toast({
-        title: "Signed out",
-        description: "You have been signed out",
-      });
+      // Removed the toast for sign out after error
     }
   };
 
