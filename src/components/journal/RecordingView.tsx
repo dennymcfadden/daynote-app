@@ -18,15 +18,14 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
   showPermissionPrompt
 }) => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
-  const [remainingTime, setRemainingTime] = useState(MAX_RECORDING_TIME);
   
-  // Force re-render when recordingTime changes
+  // Calculate remaining time directly from props instead of using state
+  const remainingTime = MAX_RECORDING_TIME - recordingTime;
+  
   useEffect(() => {
     console.log("Recording time updated:", recordingTime);
-    const newRemainingTime = MAX_RECORDING_TIME - recordingTime;
-    console.log("New remaining time:", newRemainingTime);
-    setRemainingTime(newRemainingTime);
-  }, [recordingTime]);
+    console.log("New remaining time:", remainingTime);
+  }, [recordingTime, remainingTime]);
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(Math.max(0, seconds) / 60);
@@ -74,7 +73,7 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
         <div className="w-16 h-16 rounded-full bg-red-500 animate-pulse"></div>
       </div>
       
-      <div className="text-2xl font-medium mt-4" key={remainingTime}>
+      <div className="text-2xl font-medium mt-4">
         {formatTime(remainingTime)}
       </div>
       

@@ -30,6 +30,7 @@ export const useAudioRecorder = () => {
     resetTranscription
   } = useTranscriptionState();
 
+  // Cleanup function for timers and media recorder
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -81,12 +82,15 @@ export const useAudioRecorder = () => {
       mediaRecorder.start();
       setIsRecording(true);
       
-      // Reset recording time and set up the timer to increment it every second
+      // Reset recording time
       setRecordingTime(0);
+      
+      // Clear any existing timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
       
+      // Set up a new timer that increments recordingTime every second
       timerRef.current = setInterval(() => {
         setRecordingTime(prevTime => {
           const newTime = prevTime + 1;
