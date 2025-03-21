@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { Heart, DoorOpen } from "lucide-react";
+import { Heart } from "lucide-react";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { useToast } from "@/hooks/use-toast";
 
@@ -61,7 +62,11 @@ export const AuthButton = () => {
         onClick={handleSignOut}
         aria-label="Sign Out"
       >
-        <DoorOpen className="w-7 h-7" />
+        <img 
+          src="/lovable-uploads/1c745cb2-0f96-41f3-8dee-fb18fdbc4719.png" 
+          alt="Sign Out" 
+          className="w-7 h-7"
+        />
       </Button>
       
       <FeedbackDialog 
