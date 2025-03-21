@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { saveJournalEntry } from "@/services/journalService";
 import { PromptView } from "./PromptView";
@@ -14,6 +14,8 @@ export const JournalPrompt: React.FC = () => {
   const { toast } = useToast();
   const { checkAuth } = useAuthCheck();
   const { handleError } = useErrorHandler();
+  const [isTypingMode, setIsTypingMode] = useState(false);
+  const [typedEntry, setTypedEntry] = useState("");
   
   const {
     isRecording,
@@ -34,13 +36,22 @@ export const JournalPrompt: React.FC = () => {
     startRecording();
   };
 
-  const handleSave = async () => {
+  const handleStartTyping = async () => {
+    if (!checkAuth("create journal entries")) {
+      return;
+    }
+    
+    setIsTypingMode(true);
+    setTypedEntry("");
+  };
+
+  const handleSave = async (content: string) => {
     if (!checkAuth("save journal entries")) {
       return;
     }
 
     try {
-      await saveJournalEntry(transcription);
+      await saveJournalEntry(content);
       
       toast({
         title: "Journal Entry Saved",
@@ -48,8 +59,19 @@ export const JournalPrompt: React.FC = () => {
       });
       
       resetTranscription();
+      setIsTypingMode(false);
+      setTypedEntry("");
     } catch (error) {
       handleError("Saving Entry", error);
+    }
+  };
+
+  const handleCancel = () => {
+    if (isTypingMode) {
+      setIsTypingMode(false);
+      setTypedEntry("");
+    } else {
+      resetTranscription();
     }
   };
 
@@ -68,10 +90,22 @@ export const JournalPrompt: React.FC = () => {
     return <TranscriptionView 
       transcription={transcription}
       onTranscriptionChange={setTranscription}
-      onCancel={resetTranscription}
-      onSave={handleSave}
+      onCancel={handleCancel}
+      onSave={() => handleSave(transcription)}
     />;
   }
 
-  return <PromptView onStartRecording={handleStartRecording} />;
+  if (isTypingMode) {
+    return <TranscriptionView 
+      transcription={typedEntry}
+      onTranscriptionChange={setTypedEntry}
+      onCancel={handleCancel}
+      onSave={() => handleSave(typedEntry)}
+    />;
+  }
+
+  return <PromptView 
+    onStartRecording={handleStartRecording}
+    onStartTyping={handleStartTyping}
+  />;
 };
