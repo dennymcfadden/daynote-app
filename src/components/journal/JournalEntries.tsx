@@ -135,8 +135,8 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
   if (filteredEntries.length === 0) {
     return <div className="text-center py-12 text-muted-foreground">
         {selectedDate ? 
-          `No entries for this day across any year.` : 
-          "Please select a date to view entries."}
+          `No entries for this day` : 
+          ""}
       </div>;
   }
 
