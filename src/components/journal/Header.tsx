@@ -2,7 +2,6 @@
 import React from "react";
 import { AuthButton } from "./AuthButton";
 import { FeedbackButton } from "./FeedbackButton";
-import { Calendar } from "lucide-react";
 
 export const Header = () => {
   // Get current day number
@@ -16,7 +15,11 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-3">
         <div className="relative">
-          <Calendar className="h-6 w-6 text-primary" />
+          <img 
+            src="/lovable-uploads/fe7c969e-d1c2-4a4c-a48c-47e3b0a213d6.png" 
+            alt="Calendar" 
+            className="h-6 w-6 text-primary" 
+          />
           <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
             {currentDay}
           </span>
