@@ -24,6 +24,7 @@ export const JournalPrompt: React.FC = () => {
     setTranscription,
     isTranscribing,
     permissionState,
+    showPermissionPrompt,
     startRecording,
     stopRecording,
     resetTranscription
@@ -85,6 +86,7 @@ export const JournalPrompt: React.FC = () => {
       recordingTime={recordingTime} 
       onStopRecording={stopRecording}
       permissionState={permissionState}
+      showPermissionPrompt={showPermissionPrompt}
     />;
   }
 

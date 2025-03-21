@@ -11,6 +11,7 @@ export const useAudioRecorder = () => {
   const [transcription, setTranscription] = useState("");
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [permissionState, setPermissionState] = useState<PermissionState | null>(null);
+  const [showPermissionPrompt, setShowPermissionPrompt] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -30,6 +31,11 @@ export const useAudioRecorder = () => {
           // Listen for permission changes
           permissionStatus.onchange = () => {
             setPermissionState(permissionStatus.state);
+            
+            // Hide the prompt if permission is granted
+            if (permissionStatus.state === 'granted') {
+              setShowPermissionPrompt(false);
+            }
           };
         }
       } catch (error) {
@@ -133,8 +139,18 @@ export const useAudioRecorder = () => {
         setPermissionState(permissionStatus.state);
       }
       
+      // Hide the permission prompt if we got this far
+      setShowPermissionPrompt(false);
+      
     } catch (error) {
       console.error("Microphone access error:", error);
+      
+      // Show permission prompt if we get an error
+      if (error instanceof DOMException && 
+          (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
+        setShowPermissionPrompt(true);
+        setPermissionState('denied');
+      }
       
       // Create a more helpful error message for mobile users
       let errorMessage = "Could not access microphone.";
@@ -185,6 +201,7 @@ export const useAudioRecorder = () => {
     setTranscription,
     isTranscribing,
     permissionState,
+    showPermissionPrompt,
     startRecording,
     stopRecording,
     resetTranscription
