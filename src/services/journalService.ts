@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -45,10 +46,14 @@ export const getJournalEntries = async (date?: Date) => {
     const month = date.getMonth() + 1; // JavaScript months are 0-indexed
     const day = date.getDate();
     
-    // Use proper Supabase filtering with .eq() instead of raw SQL
+    // Using simpler string matching for month and day
+    const monthStr = month.toString().padStart(2, '0');
+    const dayStr = day.toString().padStart(2, '0');
+    const monthDayPattern = `-${monthStr}-${dayStr}`; // Matches YYYY-MM-DD where MM-DD matches
+    
     query = query
       .filter('entry_date', 'not.is', null)
-      .or(`extract(month from entry_date).eq.${month},extract(day from entry_date).eq.${day}`);
+      .ilike('entry_date', `%${monthDayPattern}%`);
   }
   
   const { data, error } = await query.order("entry_date", { ascending: false });
