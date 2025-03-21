@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,15 +24,12 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
     if (!user) return;
     setIsLoading(true);
     try {
-      // Fetch all entries without filtering by date on the server
       const data = await getJournalEntries();
       setEntries(data);
       
-      // Always filter entries by month and day on the client side if selectedDate is provided
       if (selectedDate) {
         filterEntriesByMonthAndDay(data, selectedDate);
       } else {
-        // If no date is selected, don't show any entries
         setFilteredEntries([]);
       }
     } catch (error) {
@@ -44,9 +40,8 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
     }
   };
   
-  // Filter entries by month and day, ignoring the year
   const filterEntriesByMonthAndDay = (allEntries: JournalEntryType[], date: Date) => {
-    const month = date.getMonth(); // 0-indexed month
+    const month = date.getMonth();
     const day = date.getDate();
     
     const filtered = allEntries.filter(entry => {
@@ -69,12 +64,10 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
     }
   }, [user]);
   
-  // When selected date changes, filter the existing entries
   useEffect(() => {
     if (selectedDate && entries.length > 0) {
       filterEntriesByMonthAndDay(entries, selectedDate);
     } else if (!selectedDate) {
-      // If no date is selected, don't show any entries
       setFilteredEntries([]);
     }
   }, [selectedDate, entries]);
@@ -85,7 +78,6 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
       const updatedEntries = entries.filter(entry => entry.id !== id);
       setEntries(updatedEntries);
       
-      // Update filtered entries too
       if (selectedDate) {
         filterEntriesByMonthAndDay(updatedEntries, selectedDate);
       } else {
@@ -107,7 +99,6 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
       const updatedEntries = entries.map(entry => entry.id === id ? updatedEntry : entry);
       setEntries(updatedEntries);
       
-      // Update filtered entries too
       if (selectedDate) {
         filterEntriesByMonthAndDay(updatedEntries, selectedDate);
       } else {
@@ -148,13 +139,12 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
       </div>;
   }
 
-  // Format the date to show month and day only
   const formattedDate = selectedDate ? 
     selectedDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) + " (across all years)" : 
     "";
 
   return <section className="w-full max-w-4xl mx-auto px-4">
-      <h2 className="text-xl font-semibold mb-4">{formattedDate}</h2>
+      <h2 className="text-xl font-semibold mb-4">On this day:</h2>
       <div className="space-y-4">
         {filteredEntries.map(entry => <JournalEntry 
           key={entry.id} 
