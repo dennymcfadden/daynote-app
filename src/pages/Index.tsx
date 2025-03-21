@@ -1,10 +1,14 @@
-import React from "react";
+
+import React, { useEffect } from "react";
 import { Header } from "@/components/journal/Header";
 import { DateSelector } from "@/components/journal/DateSelector";
 import { JournalPrompt } from "@/components/journal/JournalPrompt";
 import { JournalEntries } from "@/components/journal/JournalEntries";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
+  const { user, isLoading } = useAuth();
+
   return (
     <>
       <link

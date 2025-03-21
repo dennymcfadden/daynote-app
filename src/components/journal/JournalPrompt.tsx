@@ -2,27 +2,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { transcribeAudio } from "@/services/transcriptionService";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { transcribeAudio, saveJournalEntry } from "@/services/journalService";
 
 export const JournalPrompt: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [transcription, setTranscription] = useState("");
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const [apiKey, setApiKey] = useState<string>(() => {
-    const savedKey = localStorage.getItem("openai-api-key");
-    return savedKey || "";
-  });
-  const [showApiKeyInput, setShowApiKeyInput] = useState(!localStorage.getItem("openai-api-key"));
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Clean up on unmount
   useEffect(() => {
@@ -36,23 +32,15 @@ export const JournalPrompt: React.FC = () => {
     };
   }, [isRecording]);
 
-  const saveApiKey = () => {
-    localStorage.setItem("openai-api-key", apiKey);
-    setShowApiKeyInput(false);
-    toast({
-      title: "API Key Saved",
-      description: "Your OpenAI API key has been saved to local storage",
-    });
-  };
-
   const startRecording = async () => {
-    if (!apiKey) {
-      setShowApiKeyInput(true);
+    // Check if user is authenticated
+    if (!user) {
       toast({
-        title: "API Key Required",
-        description: "Please enter your OpenAI API key to use transcription",
+        title: "Authentication Required",
+        description: "Please sign in to create journal entries",
         variant: "destructive",
       });
+      navigate("/auth");
       return;
     }
     
@@ -76,17 +64,12 @@ export const JournalPrompt: React.FC = () => {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
           setIsTranscribing(true);
           
-          // Send to Whisper API for transcription
-          const transcribedText = await transcribeAudio(audioBlob, apiKey);
+          // Send to our backend transcription service
+          const transcribedText = await transcribeAudio(audioBlob);
           setTranscription(transcribedText);
         } catch (error) {
           console.error("Transcription error:", error);
           const errorMessage = error instanceof Error ? error.message : "Unknown error";
-          
-          // Special handling for API key errors
-          if (errorMessage.includes("API key")) {
-            setShowApiKeyInput(true);
-          }
           
           toast({
             title: "Transcription Error",
@@ -133,15 +116,38 @@ export const JournalPrompt: React.FC = () => {
     }
   };
 
-  const handleSave = () => {
-    // In a real app, you would save this transcription to your database
-    toast({
-      title: "Transcription complete",
-      description: "Your journal entry has been created.",
-    });
-    console.log("Transcription text:", transcription);
-    // Reset component state after saving
-    setTranscription("");
+  const handleSave = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save journal entries",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      // Save entry to Supabase
+      await saveJournalEntry(transcription);
+      
+      toast({
+        title: "Journal Entry Saved",
+        description: "Your journal entry has been saved successfully.",
+      });
+      
+      // Reset component state after saving
+      setTranscription("");
+    } catch (error) {
+      console.error("Error saving journal entry:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      
+      toast({
+        title: "Error Saving Entry",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -149,40 +155,6 @@ export const JournalPrompt: React.FC = () => {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  const renderApiKeyInput = () => (
-    <div className="flex flex-col gap-4 w-full max-w-xl mx-auto p-4 border rounded-lg shadow-sm">
-      <Alert>
-        <AlertDescription>
-          You need an OpenAI API key to use the transcription service. This key will be stored in your browser only.
-        </AlertDescription>
-      </Alert>
-      
-      <div className="space-y-2">
-        <Label htmlFor="apiKey">OpenAI API Key</Label>
-        <Input
-          id="apiKey"
-          type="password" 
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          placeholder="sk-..." 
-          className="font-mono"
-        />
-        <p className="text-xs text-muted-foreground">
-          Your API key is stored locally in your browser and never sent to our servers.
-        </p>
-      </div>
-      
-      <div className="flex justify-end gap-2">
-        <Button onClick={() => setShowApiKeyInput(false)} variant="outline">
-          Cancel
-        </Button>
-        <Button onClick={saveApiKey} disabled={!apiKey}>
-          Save API Key
-        </Button>
-      </div>
-    </div>
-  );
 
   const renderPromptView = () => (
     <section
@@ -243,10 +215,6 @@ export const JournalPrompt: React.FC = () => {
       </div>
     </div>
   );
-
-  if (showApiKeyInput) {
-    return renderApiKeyInput();
-  }
 
   if (isTranscribing) {
     return renderTranscribingView();

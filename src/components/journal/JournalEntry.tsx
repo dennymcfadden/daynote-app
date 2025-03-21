@@ -1,25 +1,90 @@
-import React from "react";
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Pencil, Trash2, Save, X } from "lucide-react";
 
 type JournalEntryProps = {
-  date: string;
+  id: string;
   content: string;
-  onClick?: () => void;
+  date: string;
+  onDelete: () => void;
+  onEdit: (content: string) => void;
 };
 
 export const JournalEntry: React.FC<JournalEntryProps> = ({
-  date,
+  id,
   content,
-  onClick,
+  date,
+  onDelete,
+  onEdit,
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(content);
+
+  const handleSave = () => {
+    onEdit(editContent);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditContent(content);
+    setIsEditing(false);
+  };
+
   return (
-    <article
-      className="flex flex-col gap-3 border shadow-[0px_8px_12px_6px_rgba(0,0,0,0.05),0px_4px_4px_0px_rgba(0,0,0,0.10)] bg-white p-6 rounded-2xl border-solid border-[#D9D2D0] cursor-pointer"
-      onClick={onClick}
-    >
-      <div className="text-[rgba(0,0,0,0.5)] text-sm font-medium">{date}</div>
-      <div className="text-[rgba(0,0,0,0.8)] text-base font-medium leading-6">
-        {content}
+    <div className="p-4 border rounded-lg bg-white shadow-sm">
+      <div className="flex justify-between items-start mb-2">
+        <div className="text-sm text-gray-500">{date}</div>
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleCancel}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleSave}
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onDelete}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+        </div>
       </div>
-    </article>
+      
+      {isEditing ? (
+        <Textarea
+          value={editContent}
+          onChange={(e) => setEditContent(e.target.value)}
+          className="w-full mt-2"
+          rows={5}
+        />
+      ) : (
+        <div className="mt-2 whitespace-pre-wrap">{content}</div>
+      )}
+    </div>
   );
 };
