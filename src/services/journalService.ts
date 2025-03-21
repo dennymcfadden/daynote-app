@@ -72,11 +72,18 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
     throw new Error("Authentication required for transcription");
   }
 
+  // Create a new FormData object for sending the audio file
   const formData = new FormData();
-  formData.append("audio", audioBlob);
+  
+  // Create a file with explicit filename and extension to ensure proper format
+  const file = new File([audioBlob], "recording.webm", { type: "audio/webm" });
+  formData.append("audio", file);
+
+  console.log("Sending audio file:", file.name, file.type, file.size);
 
   // Use the correct way to access Supabase URL
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL || "https://idmkiqcvfifohecxqihj.supabase.co"}/functions/v1/transcribe`, {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://idmkiqcvfifohecxqihj.supabase.co";
+  const response = await fetch(`${supabaseUrl}/functions/v1/transcribe`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${session.access_token}`,
@@ -85,8 +92,15 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || "Failed to transcribe audio");
+    let errorMessage = "Failed to transcribe audio";
+    try {
+      const errorData = await response.json();
+      console.error("Transcription error details:", errorData);
+      errorMessage = errorData.error || errorMessage;
+    } catch (e) {
+      console.error("Could not parse error response:", e);
+    }
+    throw new Error(errorMessage);
   }
 
   const result = await response.json();

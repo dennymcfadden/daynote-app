@@ -32,7 +32,8 @@ export const useAudioRecorder = () => {
     
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const options = { mimeType: 'audio/webm' };
+      const mediaRecorder = new MediaRecorder(stream, options);
       
       mediaRecorderRef.current = mediaRecorder;
       
@@ -45,6 +46,7 @@ export const useAudioRecorder = () => {
       mediaRecorder.onstop = async () => {
         try {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          console.log("Recording complete, audio blob size:", audioBlob.size, "type:", audioBlob.type);
           setIsTranscribing(true);
           
           const transcribedText = await transcribeAudio(audioBlob);

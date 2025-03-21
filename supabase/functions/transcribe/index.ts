@@ -57,6 +57,10 @@ serve(async (req) => {
       );
     }
 
+    console.log("Audio file type:", audioFile.type);
+    console.log("Audio file name:", audioFile.name);
+    console.log("Audio file size:", audioFile.size);
+
     // Get the OpenAI API key from environment variables
     const openaiKey = Deno.env.get("OPENAI_API_KEY");
     if (!openaiKey) {
@@ -66,9 +70,13 @@ serve(async (req) => {
       );
     }
 
-    // Prepare form data for OpenAI API
+    // Prepare form data for OpenAI API with explicit file name and type
     const openaiFormData = new FormData();
-    openaiFormData.append("file", audioFile);
+    // Ensure file has proper extension based on the mime type
+    const fileExtension = audioFile.type.includes('webm') ? '.webm' : '.mp3';
+    const renamedFile = new File([audioFile], `recording${fileExtension}`, { type: audioFile.type });
+    
+    openaiFormData.append("file", renamedFile);
     openaiFormData.append("model", "whisper-1");
 
     // Send request to OpenAI Whisper API
