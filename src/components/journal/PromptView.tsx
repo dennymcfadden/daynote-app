@@ -25,13 +25,14 @@ export const PromptView: React.FC<PromptViewProps> = ({
   
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="mb-8 flex justify-center">
+      <div className="mb-8 flex justify-center w-full">
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
-                "w-[240px] justify-center text-center font-normal",
+                "justify-center text-center font-normal",
+                isMobile ? "w-full" : "w-[240px]"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
