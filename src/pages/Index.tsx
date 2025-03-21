@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -94,9 +95,13 @@ const Index = () => {
     <main className="flex justify-center items-center min-h-screen bg-[#F3EFEC] p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">
-            {isSignUp ? "Create an account" : "Sign in to DayNote"}
-          </h1>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/0f6d6781-8b08-4247-b881-2f68e9e04791.png" 
+              alt="DayNote Logo" 
+              className="h-12" 
+            />
+          </div>
           <p className="text-sm text-muted-foreground mt-2">
             {isSignUp
               ? "Create an account to save your journal entries"
