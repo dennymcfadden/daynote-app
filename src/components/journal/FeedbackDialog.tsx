@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FeedbackDialogProps {
   open: boolean;
@@ -17,6 +17,7 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
 
   const getBrowserInfo = () => {
     return `${navigator.userAgent}`;
@@ -71,7 +72,7 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className={`${isMobile ? "sm:max-w-md top-[5%] translate-y-0" : "sm:max-w-md"}`}>
         <DialogHeader>
           <DialogTitle>We love feedback</DialogTitle>
         </DialogHeader>
