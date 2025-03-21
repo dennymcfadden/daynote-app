@@ -26,7 +26,7 @@ export const TranscriptionView: React.FC<TranscriptionViewProps> = ({
       />
       <div className="flex justify-end gap-3 mt-2">
         <Button variant="outline" onClick={onCancel}>
-          Cancel
+          Discard
         </Button>
         <Button onClick={onSave}>
           Save Journal Entry
