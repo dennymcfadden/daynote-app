@@ -16,6 +16,7 @@ export const JournalPrompt: React.FC = () => {
   const { handleError } = useErrorHandler();
   const [isTypingMode, setIsTypingMode] = useState(false);
   const [typedEntry, setTypedEntry] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
   const {
     isRecording,
@@ -53,7 +54,7 @@ export const JournalPrompt: React.FC = () => {
     }
 
     try {
-      await saveJournalEntry(content);
+      await saveJournalEntry(content, selectedDate);
       
       toast({
         title: "Journal Entry Saved",
@@ -111,5 +112,7 @@ export const JournalPrompt: React.FC = () => {
   return <PromptView 
     onStartRecording={handleStartRecording}
     onStartTyping={handleStartTyping}
+    selectedDate={selectedDate}
+    onDateChange={setSelectedDate}
   />;
 };

@@ -7,9 +7,10 @@ export type JournalEntry = {
   content: string;
   created_at: string;
   updated_at: string;
+  entry_date?: string;
 };
 
-export const saveJournalEntry = async (content: string) => {
+export const saveJournalEntry = async (content: string, entryDate: Date = new Date()) => {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   if (sessionError || !sessionData.session) {
     throw new Error("Authentication required");
@@ -19,7 +20,8 @@ export const saveJournalEntry = async (content: string) => {
     .from("journal_entries")
     .insert({ 
       content,
-      user_id: sessionData.session.user.id 
+      user_id: sessionData.session.user.id,
+      entry_date: entryDate.toISOString()
     })
     .select()
     .single();
