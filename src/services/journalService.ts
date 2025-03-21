@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 export type JournalEntry = {
   id: string;
@@ -9,9 +10,17 @@ export type JournalEntry = {
 };
 
 export const saveJournalEntry = async (content: string) => {
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !sessionData.session) {
+    throw new Error("Authentication required");
+  }
+  
   const { data, error } = await supabase
     .from("journal_entries")
-    .insert({ content })
+    .insert({ 
+      content,
+      user_id: sessionData.session.user.id 
+    })
     .select()
     .single();
 
@@ -20,6 +29,11 @@ export const saveJournalEntry = async (content: string) => {
 };
 
 export const getJournalEntries = async () => {
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (!sessionData.session) {
+    return [];
+  }
+  
   const { data, error } = await supabase
     .from("journal_entries")
     .select("*")
@@ -61,7 +75,8 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
   const formData = new FormData();
   formData.append("audio", audioBlob);
 
-  const response = await fetch(`${supabase.supabaseUrl}/functions/v1/transcribe`, {
+  // Use the correct way to access Supabase URL
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL || "https://idmkiqcvfifohecxqihj.supabase.co"}/functions/v1/transcribe`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${session.access_token}`,
