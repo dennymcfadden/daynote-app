@@ -99,7 +99,6 @@ export const useAudioRecorder = () => {
       if (error instanceof DOMException && 
           (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
         setShowPermissionPrompt(true);
-        setPermissionState('denied');
       }
       
       // Create a more helpful error message for mobile users
