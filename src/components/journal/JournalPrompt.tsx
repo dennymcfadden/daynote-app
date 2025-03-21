@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,7 +19,6 @@ export const JournalPrompt: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -33,7 +31,6 @@ export const JournalPrompt: React.FC = () => {
   }, [isRecording]);
 
   const startRecording = async () => {
-    // Check if user is authenticated
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -60,11 +57,9 @@ export const JournalPrompt: React.FC = () => {
       
       mediaRecorder.onstop = async () => {
         try {
-          // Process the recorded audio for transcription
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
           setIsTranscribing(true);
           
-          // Send to our backend transcription service
           const transcribedText = await transcribeAudio(audioBlob);
           setTranscription(transcribedText);
         } catch (error) {
@@ -84,7 +79,6 @@ export const JournalPrompt: React.FC = () => {
       mediaRecorder.start();
       setIsRecording(true);
       
-      // Start timer
       setRecordingTime(0);
       timerRef.current = setInterval(() => {
         setRecordingTime((prev) => prev + 1);
@@ -105,10 +99,8 @@ export const JournalPrompt: React.FC = () => {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
       
-      // Stop all audio tracks
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       
-      // Stop timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -128,7 +120,6 @@ export const JournalPrompt: React.FC = () => {
     }
 
     try {
-      // Save entry to Supabase
       await saveJournalEntry(transcription);
       
       toast({
@@ -136,7 +127,6 @@ export const JournalPrompt: React.FC = () => {
         description: "Your journal entry has been saved successfully.",
       });
       
-      // Reset component state after saving
       setTranscription("");
     } catch (error) {
       console.error("Error saving journal entry:", error);
@@ -168,9 +158,6 @@ export const JournalPrompt: React.FC = () => {
           alt="Microphone" 
           className="w-12 h-12"
         />
-      </div>
-      <div className="text-[rgba(0,0,0,0.3)] text-sm italic">
-        Speak to journal
       </div>
     </section>
   );
