@@ -9,10 +9,12 @@ export const useAudioRecorder = () => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [recordingError, setRecordingError] = useState<string | null>(null);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
 
   const {
@@ -43,9 +45,18 @@ export const useAudioRecorder = () => {
       timerRef.current = null;
     }
     
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (e) {
+        console.error("Error stopping media recorder:", e);
+      }
+    }
+    
+    // Always clean up the stream
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
   };
 
@@ -64,6 +75,7 @@ export const useAudioRecorder = () => {
     // Reset state
     audioChunksRef.current = [];
     setRecordingTime(0);
+    setRecordingError(null);
     
     // Clear any existing timer
     if (timerRef.current) {
@@ -71,11 +83,15 @@ export const useAudioRecorder = () => {
       timerRef.current = null;
     }
     
+    // Make sure any previous recording session is properly closed
+    stopTimerAndRecorder();
+    
     try {
       const constraints = getAudioConstraints();
       
       console.log("Requesting microphone access with constraints:", constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
       
       const { mimeType, options } = getOptimalAudioConfig();
       console.log(`Using MIME type: ${options.mimeType || 'default'}`);
@@ -84,18 +100,57 @@ export const useAudioRecorder = () => {
       mediaRecorderRef.current = mediaRecorder;
       
       mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
+        if (event.data && event.data.size > 0) {
+          console.log(`Received audio chunk of size: ${event.data.size}`);
           audioChunksRef.current.push(event.data);
+        } else {
+          console.warn("Received empty audio data");
         }
       };
       
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-        await processAudioForTranscription(audioBlob, mimeType);
+      mediaRecorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event);
+        setRecordingError("Recording error occurred");
+        stopRecording();
       };
       
-      // Start the MediaRecorder
-      mediaRecorder.start();
+      mediaRecorder.onstop = async () => {
+        console.log("MediaRecorder stopped, processing audio...");
+        
+        if (audioChunksRef.current.length === 0) {
+          console.warn("No audio data collected");
+          toast({
+            title: "Recording Error",
+            description: "No audio data was captured. Please try again.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        console.log(`Created audio blob: size=${audioBlob.size}, type=${audioBlob.type}`);
+        
+        if (audioBlob.size > 0) {
+          await processAudioForTranscription(audioBlob, mimeType);
+        } else {
+          toast({
+            title: "Recording Error",
+            description: "Empty audio recording. Please try again.",
+            variant: "destructive"
+          });
+        }
+      };
+      
+      // We need to make sure we request data frequently on iOS
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      
+      // Start the MediaRecorder with timeslice parameter for iOS
+      if (isIOS) {
+        mediaRecorder.start(1000); // Request data every second on iOS
+      } else {
+        mediaRecorder.start();
+      }
+      
       setIsRecording(true);
       
       // Create a new interval timer that increments every second
@@ -142,20 +197,40 @@ export const useAudioRecorder = () => {
         }
       }
       
+      setRecordingError(errorMessage);
       throw new Error(errorMessage);
     }
   };
 
   const stopRecording = () => {
+    console.log("Stopping recording...");
+    
     if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
+      try {
+        if (mediaRecorderRef.current.state !== 'inactive') {
+          mediaRecorderRef.current.stop();
+        }
+        setIsRecording(false);
+        
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => {
+            console.log(`Stopping track: ${track.kind}`);
+            track.stop();
+          });
+          streamRef.current = null;
+        }
+        
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+      } catch (error) {
+        console.error("Error stopping recording:", error);
+        toast({
+          title: "Error",
+          description: "There was a problem stopping the recording.",
+          variant: "destructive"
+        });
       }
     }
   };
@@ -163,6 +238,7 @@ export const useAudioRecorder = () => {
   return {
     isRecording,
     recordingTime,
+    recordingError,
     transcription,
     setTranscription,
     isTranscribing,

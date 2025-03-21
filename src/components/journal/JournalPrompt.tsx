@@ -22,6 +22,7 @@ export const JournalPrompt: React.FC = () => {
   const {
     isRecording,
     recordingTime,
+    recordingError,
     transcription,
     setTranscription,
     isTranscribing,
@@ -37,7 +38,12 @@ export const JournalPrompt: React.FC = () => {
       return;
     }
     
-    startRecording();
+    try {
+      await startRecording();
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      // Error handling is done within startRecording
+    }
   };
 
   const handleStartTyping = async () => {
@@ -89,6 +95,7 @@ export const JournalPrompt: React.FC = () => {
       onStopRecording={stopRecording}
       permissionState={permissionState}
       showPermissionPrompt={showPermissionPrompt}
+      recordingError={recordingError}
     />;
   }
 
