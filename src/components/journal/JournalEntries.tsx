@@ -107,7 +107,7 @@ export const JournalEntries: React.FC = () => {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        no entries
+        No entries yet.
       </div>
     );
   }
