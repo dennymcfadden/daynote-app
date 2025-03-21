@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ImagePlus, X, Image as ImageIcon } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import { resizeImage, createImagePreview, revokeImagePreview } from "@/utils/imageUtils";
 
 interface TranscriptionViewProps {

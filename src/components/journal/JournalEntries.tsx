@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -154,6 +153,7 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
           date={entry.entry_date ? 
             new Date(entry.entry_date).getFullYear().toString() : 
             new Date(entry.created_at).getFullYear().toString()} 
+          imageUrl={entry.image_url}
           onDelete={() => handleDelete(entry.id)} 
           onEdit={content => handleEdit(entry.id, content)} 
         />)}
