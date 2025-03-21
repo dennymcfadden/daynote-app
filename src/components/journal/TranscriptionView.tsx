@@ -29,7 +29,7 @@ export const TranscriptionView: React.FC<TranscriptionViewProps> = ({
           Discard
         </Button>
         <Button onClick={onSave}>
-          Save Journal Entry
+          Save
         </Button>
       </div>
     </div>
