@@ -5,7 +5,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PromptViewProps {
@@ -24,7 +23,7 @@ export const PromptView: React.FC<PromptViewProps> = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full px-6">
       <div className="mb-8 flex justify-center w-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -35,7 +34,6 @@ export const PromptView: React.FC<PromptViewProps> = ({
                 isMobile ? "w-full" : "w-[240px]"
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
               {format(selectedDate, "PPP")}
             </Button>
           </PopoverTrigger>
