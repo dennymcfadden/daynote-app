@@ -10,6 +10,7 @@ import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { JournalEntries } from "./JournalEntries";
+import { Header } from "./Header";
 
 export const JournalPrompt: React.FC = () => {
   const { toast } = useToast();
@@ -90,43 +91,56 @@ export const JournalPrompt: React.FC = () => {
   };
 
   if (isTranscribing) {
-    return <TranscribingView />;
+    return <>
+      <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <TranscribingView />
+    </>;
   }
 
   if (isRecording) {
-    return <RecordingView 
-      recordingTime={recordingTime} 
-      onStopRecording={stopRecording}
-      permissionState={permissionState}
-      showPermissionPrompt={showPermissionPrompt}
-      recordingError={recordingError}
-    />;
+    return <>
+      <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <RecordingView 
+        recordingTime={recordingTime} 
+        onStopRecording={stopRecording}
+        permissionState={permissionState}
+        showPermissionPrompt={showPermissionPrompt}
+        recordingError={recordingError}
+      />
+    </>;
   }
 
   if (transcription) {
-    return <TranscriptionView 
-      transcription={transcription}
-      onTranscriptionChange={setTranscription}
-      onCancel={handleCancel}
-      onSave={() => handleSave(transcription)}
-      imageFile={imageFile}
-      onImageChange={setImageFile}
-    />;
+    return <>
+      <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <TranscriptionView 
+        transcription={transcription}
+        onTranscriptionChange={setTranscription}
+        onCancel={handleCancel}
+        onSave={() => handleSave(transcription)}
+        imageFile={imageFile}
+        onImageChange={setImageFile}
+      />
+    </>;
   }
 
   if (isTypingMode) {
-    return <TranscriptionView 
-      transcription={typedEntry}
-      onTranscriptionChange={setTypedEntry}
-      onCancel={handleCancel}
-      onSave={() => handleSave(typedEntry)}
-      imageFile={imageFile}
-      onImageChange={setImageFile}
-    />;
+    return <>
+      <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <TranscriptionView 
+        transcription={typedEntry}
+        onTranscriptionChange={setTypedEntry}
+        onCancel={handleCancel}
+        onSave={() => handleSave(typedEntry)}
+        imageFile={imageFile}
+        onImageChange={setImageFile}
+      />
+    </>;
   }
 
   return (
     <>
+      <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
       <PromptView 
         onStartRecording={handleStartRecording}
         onStartTyping={handleStartTyping}

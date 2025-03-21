@@ -1,10 +1,6 @@
 
 import React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 interface PromptViewProps {
@@ -17,37 +13,11 @@ interface PromptViewProps {
 export const PromptView: React.FC<PromptViewProps> = ({
   onStartRecording,
   onStartTyping,
-  selectedDate,
-  onDateChange
 }) => {
   const isMobile = useIsMobile();
   
   return (
     <div className="flex flex-col items-center w-full px-6">
-      <div className="mb-8 flex justify-center w-full">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "justify-center text-center font-normal mx-2",
-                isMobile ? "w-full" : "w-[240px]"
-              )}
-            >
-              {format(selectedDate, "PPP")}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="center">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && onDateChange(date)}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-      
       <section className={cn(
         "flex flex-col items-center gap-7 w-full px-0 cursor-pointer",
         isMobile ? "py-[25px]" : "py-[100px]"
