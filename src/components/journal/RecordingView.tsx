@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
@@ -19,13 +18,15 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
 }) => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
   
-  // Calculate remaining time directly from props instead of using state
-  const remainingTime = MAX_RECORDING_TIME - recordingTime;
+  // Use local state to track the display time
+  const [displayTime, setDisplayTime] = useState(MAX_RECORDING_TIME);
   
+  // Update the display time whenever recording time changes
   useEffect(() => {
-    console.log("Recording time updated:", recordingTime);
-    console.log("New remaining time:", remainingTime);
-  }, [recordingTime, remainingTime]);
+    const remaining = MAX_RECORDING_TIME - recordingTime;
+    setDisplayTime(remaining);
+    console.log("Recording time updated:", recordingTime, "Remaining:", remaining);
+  }, [recordingTime]);
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(Math.max(0, seconds) / 60);
@@ -74,7 +75,7 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
       </div>
       
       <div className="text-2xl font-medium mt-4">
-        {formatTime(remainingTime)}
+        {formatTime(displayTime)}
       </div>
       
       <Button 

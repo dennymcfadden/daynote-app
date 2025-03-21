@@ -33,14 +33,21 @@ export const useAudioRecorder = () => {
   // Cleanup function for timers and media recorder
   useEffect(() => {
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      if (mediaRecorderRef.current && isRecording) {
-        mediaRecorderRef.current.stop();
-      }
+      stopTimerAndRecorder();
     };
-  }, [isRecording]);
+  }, []);
+
+  const stopTimerAndRecorder = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+  };
 
   // Effect to automatically stop recording when reaching the time limit
   useEffect(() => {
@@ -54,7 +61,15 @@ export const useAudioRecorder = () => {
   }, [recordingTime, isRecording]);
 
   const startRecording = async () => {
+    // Reset state
     audioChunksRef.current = [];
+    setRecordingTime(0);
+    
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     
     try {
       const constraints = getAudioConstraints();
@@ -79,21 +94,14 @@ export const useAudioRecorder = () => {
         await processAudioForTranscription(audioBlob, mimeType);
       };
       
+      // Start the MediaRecorder
       mediaRecorder.start();
       setIsRecording(true);
       
-      // Reset recording time
-      setRecordingTime(0);
-      
-      // Clear any existing timer
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      
-      // Set up a new timer that increments recordingTime every second
+      // Create a new interval timer that increments every second
       timerRef.current = setInterval(() => {
-        setRecordingTime(prevTime => {
-          const newTime = prevTime + 1;
+        setRecordingTime(prev => {
+          const newTime = prev + 1;
           console.log("Recording time incremented to:", newTime);
           return newTime;
         });
