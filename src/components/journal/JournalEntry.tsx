@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 type JournalEntryProps = {
@@ -49,40 +48,33 @@ export const JournalEntry: React.FC<JournalEntryProps> = ({
       <div className="flex gap-2 mt-4">
         {isEditing ? (
           <>
-            <Button 
-              size="sm" 
-              variant="outline" 
+            <button 
               onClick={handleCancel} 
-              className="text-xs px-2 py-1 h-auto"
+              className="text-xs text-blue-600 hover:underline"
             >
               Cancel
-            </Button>
-            <Button 
-              size="sm" 
+            </button>
+            <button 
               onClick={handleSave} 
-              className="text-xs px-2 py-1 h-auto"
+              className="text-xs text-blue-600 hover:underline ml-2"
             >
               Save
-            </Button>
+            </button>
           </>
         ) : (
           <>
-            <Button 
-              size="sm" 
-              variant="outline" 
+            <button 
               onClick={() => setIsEditing(true)} 
-              className="text-xs px-2 py-1 h-auto"
+              className="text-xs text-blue-600 hover:underline"
             >
               Edit
-            </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
+            </button>
+            <button 
               onClick={onDelete} 
-              className="text-xs px-2 py-1 h-auto"
+              className="text-xs text-blue-600 hover:underline ml-2"
             >
               Delete
-            </Button>
+            </button>
           </>
         )}
       </div>
