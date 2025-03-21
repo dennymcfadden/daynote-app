@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Download, LogOut } from "lucide-react";
 import { downloadJournalEntriesAsCsv } from "@/utils/csvExport";
 
 export const AuthButton = () => {
@@ -23,12 +21,10 @@ export const AuthButton = () => {
     try {
       await signOut();
       navigate("/");
-      // Removed the toast for successful sign out
     } catch (error) {
       console.error("Error in handleSignOut:", error);
       localStorage.removeItem("supabase.auth.token");
       navigate("/");
-      // Removed the toast for sign out after error
     }
   };
 
@@ -78,18 +74,16 @@ export const AuthButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem 
-          className="flex items-center gap-2 cursor-pointer" 
+          className="cursor-pointer" 
           onClick={handleDownloadEntries}
         >
-          <Download className="h-4 w-4" />
-          <span>Export CSV</span>
+          <span>Download my data</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
-          className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive" 
+          className="cursor-pointer text-destructive focus:text-destructive" 
           onClick={handleSignOut}
         >
-          <LogOut className="h-4 w-4" />
           <span>Sign Out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
