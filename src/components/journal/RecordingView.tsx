@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -20,7 +19,6 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
 }) => {
   const MAX_RECORDING_TIME = 120; // 2 minutes in seconds
   const remainingTime = MAX_RECORDING_TIME - recordingTime;
-  const progressPercentage = (recordingTime / MAX_RECORDING_TIME) * 100;
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -68,12 +66,8 @@ export const RecordingView: React.FC<RecordingViewProps> = ({
         <div className="w-16 h-16 rounded-full bg-red-500 animate-pulse"></div>
       </div>
       
-      <div className="w-full max-w-md space-y-2">
-        <div className="flex justify-between text-sm">
-          <span>Recording</span>
-          <span className="font-medium">{formatTime(remainingTime)} remaining</span>
-        </div>
-        <Progress value={progressPercentage} className="h-2" />
+      <div className="text-lg font-medium mt-2">
+        {formatTime(remainingTime)}
       </div>
       
       <Button 
