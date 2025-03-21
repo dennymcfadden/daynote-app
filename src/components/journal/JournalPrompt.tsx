@@ -162,12 +162,12 @@ export const JournalPrompt: React.FC = () => {
       onClick={startRecording}
       aria-label="Click to start voice journaling"
     >
-      <div className="flex items-center gap-[13px]">
-        <div className="w-2 h-2 rounded-full bg-[rgba(0,0,0,0.8)]" />
-        <div className="w-2 h-2 rounded-full bg-[rgba(0,0,0,0.8)]" />
-        <div className="w-2 h-2 rounded-full bg-[rgba(0,0,0,0.8)]" />
-        <div className="w-2 h-2 rounded-full bg-[rgba(0,0,0,0.8)]" />
-        <div className="w-2 h-2 rounded-full bg-[rgba(0,0,0,0.8)]" />
+      <div className="w-24 h-24 rounded-3xl flex items-center justify-center bg-[#E9E3E2]">
+        <img 
+          src="/lovable-uploads/27d42274-817b-49d7-8fbf-636a3b843171.png" 
+          alt="Microphone" 
+          className="w-12 h-12"
+        />
       </div>
       <div className="text-[rgba(0,0,0,0.3)] text-sm italic">
         Speak to journal
