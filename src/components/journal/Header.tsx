@@ -18,7 +18,7 @@ export const Header = () => {
           <img 
             src="/lovable-uploads/fe7c969e-d1c2-4a4c-a48c-47e3b0a213d6.png" 
             alt="Calendar" 
-            className="h-6 w-6 text-primary" 
+            className="w-7 h-7 text-primary" 
           />
           <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
             {currentDay}
@@ -29,3 +29,4 @@ export const Header = () => {
     </header>
   );
 };
+
