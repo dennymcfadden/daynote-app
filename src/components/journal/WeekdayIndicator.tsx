@@ -3,10 +3,12 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, isToday } from "date-fns";
 import { useAuth } from "@/hooks/useAuth";
+
 interface WeekdayIndicatorProps {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
 }
+
 export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
   selectedDate,
   onSelectDate
@@ -21,12 +23,12 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
 
   // Get the days of the current week
   useEffect(() => {
-    // Start the week on Monday (1) instead of Sunday (0)
+    // Start the week on Sunday (0) instead of Monday (1)
     const start = startOfWeek(new Date(), {
-      weekStartsOn: 1
+      weekStartsOn: 0
     });
     const end = endOfWeek(start, {
-      weekStartsOn: 1
+      weekStartsOn: 0
     });
 
     // Get all days of the current week
@@ -45,6 +47,7 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
       fetchEntriesForWeek(days);
     }
   }, [user]);
+
   const fetchEntriesForWeek = async (days: Date[]) => {
     if (!user) return;
     try {
@@ -71,13 +74,15 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
       console.error("Error fetching journal entries for week:", error);
     }
   };
+
   const handleDayClick = (date: Date) => {
     onSelectDate(date);
   };
+
   return <div className="flex justify-around items-center w-full py-4 px-[6px]">
       {weekdays.map((day, index) => <div key={index} className="flex flex-col items-center cursor-pointer" onClick={() => handleDayClick(day.date)}>
-          <div className={cn("w-2 h-2 rounded-full mb-1", day.hasEntry ? "bg-green-600" : "bg-stone-500")} />
-          <span className={cn("text-sm text-[#403E43]", isToday(day.date) ? "font-bold" : "font-normal")}>
+          <div className={cn("w-2 h-2 rounded-full mb-1", day.hasEntry ? "bg-green-600" : "bg-neutral-400")} />
+          <span className="text-sm text-[#403E43]">
             {format(day.date, 'EEE')}
           </span>
         </div>)}
