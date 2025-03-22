@@ -6,11 +6,15 @@ import { cn } from "@/lib/utils";
 interface PromptViewProps {
   onStartRecording: () => void;
   onStartTyping: () => void;
+  selectedDate?: Date;
+  onDateChange?: (date: Date) => void;
 }
 
 export const PromptView: React.FC<PromptViewProps> = ({
   onStartRecording,
   onStartTyping,
+  selectedDate,
+  onDateChange,
 }) => {
   const isMobile = useIsMobile();
   
