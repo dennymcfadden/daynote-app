@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,12 +80,27 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     onSelectDate(date);
   };
 
+  const isSameDay = (date1: Date, date2: Date) => {
+    return date1.getDate() === date2.getDate() && 
+           date1.getMonth() === date2.getMonth() && 
+           date1.getFullYear() === date2.getFullYear();
+  };
+
   return <div className="flex justify-around items-center w-full py-4 px-[6px]">
-      {weekdays.map((day, index) => <div key={index} className="flex flex-col items-center cursor-pointer" onClick={() => handleDayClick(day.date)}>
+      {weekdays.map((day, index) => (
+        <div 
+          key={index} 
+          className={cn(
+            "flex flex-col items-center cursor-pointer px-2 py-1 rounded-md",
+            isSameDay(day.date, selectedDate) ? "bg-gray-100" : ""
+          )} 
+          onClick={() => handleDayClick(day.date)}
+        >
           <div className={cn("w-2 h-2 rounded-full mb-1", day.hasEntry ? "bg-green-600" : "bg-neutral-400")} />
           <span className="text-sm text-[#403E43]">
             {format(day.date, 'EEE')}
           </span>
-        </div>)}
+        </div>
+      ))}
     </div>;
 };
