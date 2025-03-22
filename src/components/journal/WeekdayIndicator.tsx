@@ -91,7 +91,7 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
           <div 
             className={cn(
               "w-2 h-2 rounded-full mb-1",
-              day.hasEntry ? "bg-[#F2FCE2]" : "bg-[#F1F0FB]"
+              day.hasEntry ? "bg-green-600" : "bg-stone-500"
             )}
           />
           <span 
