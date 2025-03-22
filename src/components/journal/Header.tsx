@@ -4,7 +4,7 @@ import { AuthButton } from "./AuthButton";
 import { FeedbackButton } from "./FeedbackButton";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 interface HeaderProps {
   selectedDate?: Date;
@@ -30,9 +30,13 @@ export const Header: React.FC<HeaderProps> = ({ selectedDate = new Date(), onDat
       <div className="flex items-center gap-3">
         <Popover>
           <PopoverTrigger asChild>
-            <div className="relative cursor-pointer flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-100">
-              <CalendarIcon className="w-5 h-5 text-gray-700" />
-              <span className="absolute text-xs font-semibold">
+            <div className="relative cursor-pointer">
+              <img 
+                src="/lovable-uploads/fe7c969e-d1c2-4a4c-a48c-47e3b0a213d6.png" 
+                alt="Calendar" 
+                className="w-7 h-7 text-primary" 
+              />
+              <span className="absolute top-[56%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
                 {currentDay}
               </span>
             </div>
