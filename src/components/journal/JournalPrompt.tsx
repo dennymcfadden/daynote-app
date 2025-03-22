@@ -11,6 +11,7 @@ import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { JournalEntries } from "./JournalEntries";
 import { Header } from "./Header";
+import { WeekdayIndicator } from "./WeekdayIndicator";
 
 export const JournalPrompt: React.FC = () => {
   const { toast } = useToast();
@@ -141,6 +142,7 @@ export const JournalPrompt: React.FC = () => {
   return (
     <>
       <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <WeekdayIndicator selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       <PromptView 
         onStartRecording={handleStartRecording}
         onStartTyping={handleStartTyping}

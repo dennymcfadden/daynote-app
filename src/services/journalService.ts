@@ -79,6 +79,23 @@ export const getJournalEntries = async () => {
   return data as JournalEntry[];
 };
 
+export const getJournalEntriesForWeek = async (startDate: Date, endDate: Date) => {
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (!sessionData.session) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("journal_entries")
+    .select("entry_date")
+    .filter('user_id', 'eq', sessionData.session.user.id)
+    .gte('entry_date', startDate.toISOString())
+    .lte('entry_date', endDate.toISOString());
+
+  if (error) throw error;
+  return data as Pick<JournalEntry, 'entry_date'>[];
+};
+
 export const updateJournalEntry = async (id: string, content: string) => {
   const { data, error } = await supabase
     .from("journal_entries")
