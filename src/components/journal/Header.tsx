@@ -1,3 +1,4 @@
+
 import React from "react";
 import { AuthButton } from "./AuthButton";
 import { FeedbackButton } from "./FeedbackButton";
@@ -28,7 +29,16 @@ export const Header: React.FC<HeaderProps> = ({
         <Popover>
           <PopoverTrigger asChild>
             <div className="relative cursor-pointer">
-              <img src="/lovable-uploads/fe7c969e-d1c2-4a4c-a48c-47e3b0a213d6.png" alt="Calendar" className="w-7 h-7 text-primary" />
+              <svg
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-7 h-7 text-primary"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="2"/>
+              </svg>
               <span className="absolute top-[56%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
                 {currentDay}
               </span>
