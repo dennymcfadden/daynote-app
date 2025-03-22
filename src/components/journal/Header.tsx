@@ -17,6 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   // Get current day number
   const currentDay = selectedDate.getDate();
+  // Get current month as 3-letter abbreviation
+  const currentMonth = format(selectedDate, 'MMM');
   
   const handleDateChange = (date: Date | undefined) => {
     if (date && onDateChange) {
@@ -32,20 +34,16 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center gap-3">
         <Popover>
           <PopoverTrigger asChild>
-            <div className="relative cursor-pointer">
-              <svg
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="relative cursor-pointer flex flex-col items-center">
+              <img 
+                src="/lovable-uploads/4d3ca1bf-7796-46fe-8daa-170f2cc26ca5.png" 
+                alt="Calendar" 
                 className="w-7 h-7 text-primary"
-              >
-                <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-              <span className="absolute top-[56%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
-                {currentDay}
-              </span>
+              />
+              <div className="absolute flex flex-col items-center justify-center inset-0">
+                <span className="text-[8px] font-medium mt-1">{currentMonth}</span>
+                <span className="text-xs font-semibold">{currentDay}</span>
+              </div>
             </div>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="end">
