@@ -33,11 +33,19 @@ export const Header: React.FC<HeaderProps> = ({
         <Popover>
           <PopoverTrigger asChild>
             <div className="relative cursor-pointer">
-              <img 
-                src="/lovable-uploads/dd193ce2-d02c-4d52-8b86-0e765da7de02.png" 
-                alt="Menu"
-                className="w-7 h-7" 
-              />
+              <svg
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-7 h-7 text-primary"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              <span className="absolute top-[56%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
+                {currentDay}
+              </span>
             </div>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="end">

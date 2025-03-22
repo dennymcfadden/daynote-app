@@ -66,33 +66,11 @@ export const AuthButton = () => {
           className="p-1 h-auto"
           aria-label="Account Options"
         >
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
+          <img 
+            src="/lovable-uploads/dd193ce2-d02c-4d52-8b86-0e765da7de02.png" 
+            alt="Menu"
             className="w-7 h-7"
-          >
-            <path 
-              d="M3 6H21" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round"
-            />
-            <path 
-              d="M3 12H21" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round"
-            />
-            <path 
-              d="M3 18H21" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round"
-            />
-          </svg>
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
