@@ -10,11 +10,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/useAuth";
 import { JournalPrompt } from "@/components/journal/JournalPrompt";
+
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters")
 });
+
 type AuthFormValues = z.infer<typeof authSchema>;
+
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -26,6 +29,7 @@ const Index = () => {
   const {
     user
   } = useAuth();
+
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -33,6 +37,7 @@ const Index = () => {
       password: ""
     }
   });
+
   const forgotPasswordForm = useForm({
     resolver: zodResolver(z.object({
       email: z.string().email("Please enter a valid email address")
@@ -41,12 +46,11 @@ const Index = () => {
       email: ""
     }
   });
+
   const onSubmit = async (values: AuthFormValues) => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        // Using signInWithPassword directly for new users
-        // This skips email verification completely
         const {
           error
         } = await supabase.auth.signUp({
@@ -55,13 +59,12 @@ const Index = () => {
           options: {
             emailRedirectTo: `${window.location.origin}/`,
             data: {
-              email_confirmed: true // Force email to be confirmed
+              email_confirmed: true
             }
           }
         });
         if (error) throw error;
 
-        // Sign in immediately after signup
         const {
           error: signInError
         } = await supabase.auth.signInWithPassword({
@@ -89,6 +92,7 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
   const handleForgotPassword = async (values: {
     email: string;
   }) => {
@@ -105,7 +109,6 @@ const Index = () => {
         description: "Check your email for a password reset link"
       });
 
-      // Return to login form after successful password reset request
       setIsForgotPassword(false);
     } catch (error: any) {
       toast({
@@ -117,14 +120,16 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
   if (user) {
     return <>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
-        <main className="flex flex-col items-center gap-4 min-h-screen w-full bg-[#F3EFEC] px-0 py-6">
+        <main className="flex flex-col items-center gap-4 min-h-screen w-full bg-[#F3EFEC] px-0 py-0">
           <JournalPrompt />
         </main>
       </>;
   }
+
   return <main className="flex justify-center items-center min-h-screen bg-[#F3EFEC] p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
@@ -134,7 +139,6 @@ const Index = () => {
         </div>
 
         {!isForgotPassword ?
-      // Regular login/signup form
       <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField control={form.control} name="email" render={({
@@ -161,7 +165,6 @@ const Index = () => {
               </Button>
             </form>
           </Form> :
-      // Forgot password form
       <Form {...forgotPasswordForm}>
             <form onSubmit={forgotPasswordForm.handleSubmit(handleForgotPassword)} className="space-y-4">
               <FormField control={forgotPasswordForm.control} name="email" render={({
@@ -195,4 +198,5 @@ const Index = () => {
       </div>
     </main>;
 };
+
 export default Index;
