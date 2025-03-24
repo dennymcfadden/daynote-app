@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AuthButton } from "./AuthButton";
 import { FeedbackButton } from "./FeedbackButton";
@@ -29,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center gap-3">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" className="h-9 px-3 py-1 text-white hover:text-white bg-green-800 hover:bg-green-900">
+            <Button variant="ghost" className="h-9 px-3 py-1 text-white hover:text-white bg-green-900 hover:bg-green-900">
               {formattedDate}
             </Button>
           </PopoverTrigger>
