@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +17,6 @@ const authSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters")
 });
 
-// Updated type definition for accessCode to allow empty string
 const accessCodeSchema = z.object({
   accessCode: z.string().refine(code => code === ACCESS_CODE || code === "", {
     message: "Invalid access code"
@@ -49,7 +47,8 @@ const Index = () => {
     resolver: zodResolver(accessCodeSchema),
     defaultValues: {
       accessCode: ""
-    }
+    },
+    mode: "onChange"
   });
 
   const forgotPasswordForm = useForm({
@@ -126,6 +125,7 @@ const Index = () => {
   };
 
   const verifyAccessCode = (values: AccessCodeFormValues) => {
+    console.log("Verifying access code:", values.accessCode);
     if (values.accessCode === ACCESS_CODE) {
       setAccessCodeVerified(true);
       toast({
@@ -190,15 +190,26 @@ const Index = () => {
             ) : (
               <Form {...accessCodeForm}>
                 <form onSubmit={accessCodeForm.handleSubmit(verifyAccessCode)} className="space-y-4">
-                  <FormField control={accessCodeForm.control} name="accessCode" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Access Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter access code" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                  <FormField 
+                    control={accessCodeForm.control} 
+                    name="accessCode" 
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Access Code</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Enter access code" 
+                            {...field} 
+                            onChange={(e) => {
+                              console.log("Input value:", e.target.value);
+                              field.onChange(e);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} 
+                  />
                   
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? "Verifying..." : "Verify Access Code"}
