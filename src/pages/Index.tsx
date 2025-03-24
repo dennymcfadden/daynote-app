@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,22 +10,22 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/useAuth";
 import { JournalPrompt } from "@/components/journal/JournalPrompt";
-
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters")
 });
-
 type AuthFormValues = z.infer<typeof authSchema>;
-
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  
+  const {
+    user
+  } = useAuth();
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -34,7 +33,6 @@ const Index = () => {
       password: ""
     }
   });
-  
   const forgotPasswordForm = useForm({
     resolver: zodResolver(z.object({
       email: z.string().email("Please enter a valid email address")
@@ -43,14 +41,15 @@ const Index = () => {
       email: ""
     }
   });
-  
   const onSubmit = async (values: AuthFormValues) => {
     setIsLoading(true);
     try {
       if (isSignUp) {
         // Using signInWithPassword directly for new users
         // This skips email verification completely
-        const { error } = await supabase.auth.signUp({
+        const {
+          error
+        } = await supabase.auth.signUp({
           email: values.email,
           password: values.password,
           options: {
@@ -63,13 +62,17 @@ const Index = () => {
         if (error) throw error;
 
         // Sign in immediately after signup
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const {
+          error: signInError
+        } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password
         });
         if (signInError) throw signInError;
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const {
+          error
+        } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password
         });
@@ -86,11 +89,14 @@ const Index = () => {
       setIsLoading(false);
     }
   };
-  
-  const handleForgotPassword = async (values: { email: string; }) => {
+  const handleForgotPassword = async (values: {
+    email: string;
+  }) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
+      const {
+        error
+      } = await supabase.auth.resetPasswordForEmail(values.email, {
         redirectTo: `${window.location.origin}/`
       });
       if (error) throw error;
@@ -111,107 +117,82 @@ const Index = () => {
       setIsLoading(false);
     }
   };
-  
   if (user) {
-    return (
-      <>
+    return <>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
         <main className="flex flex-col items-center gap-4 min-h-screen w-full bg-[#F3EFEC] px-0 py-6">
           <JournalPrompt />
         </main>
-      </>
-    );
+      </>;
   }
-  
-  return (
-    <main className="flex justify-center items-center min-h-screen bg-[#F3EFEC] p-4">
+  return <main className="flex justify-center items-center min-h-screen bg-[#F3EFEC] p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
           <div className="flex justify-center mt-4 mb-16 py-0">
-            <img src="/lovable-uploads/0f6d6781-8b08-4247-b881-2f68e9e04791.png" alt="DayNote Logo" className="h-12" />
+            <img alt="DayNote Logo" src="/lovable-uploads/ba89942c-401e-44ea-8dc1-91b26d2dc38a.png" className="h-16" />
           </div>
         </div>
 
-        {!isForgotPassword ? 
-          // Regular login/signup form
-          <Form {...form}>
+        {!isForgotPassword ?
+      // Regular login/signup form
+      <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={form.control} name="email" render={({
+            field
+          }) => <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="name@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
+                  </FormItem>} />
+              <FormField control={form.control} name="password" render={({
+            field
+          }) => <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
 
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Processing..." : isSignUp ? "Sign Up" : "Sign In"}
               </Button>
             </form>
-          </Form> 
-        : 
-          // Forgot password form
-          <Form {...forgotPasswordForm}>
+          </Form> :
+      // Forgot password form
+      <Form {...forgotPasswordForm}>
             <form onSubmit={forgotPasswordForm.handleSubmit(handleForgotPassword)} className="space-y-4">
-              <FormField
-                control={forgotPasswordForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
+              <FormField control={forgotPasswordForm.control} name="email" render={({
+            field
+          }) => <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="name@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
               
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Processing..." : "Send Reset Link"}
               </Button>
             </form>
-          </Form>
-        }
+          </Form>}
 
         <div className="text-center pt-4">
-          {!isForgotPassword ? (
-            <>
+          {!isForgotPassword ? <>
               <button onClick={() => setIsSignUp(!isSignUp)} className="text-sm hover:underline mb-2 block w-full text-gray-500">
                 {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
               </button>
               <button onClick={() => setIsForgotPassword(true)} className="text-sm text-gray-500 hover:text-gray-700 hover:underline mt-2 block w-full">
                 Forgot password?
               </button>
-            </>
-          ) : (
-            <button onClick={() => setIsForgotPassword(false)} className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
+            </> : <button onClick={() => setIsForgotPassword(false)} className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
               Back to sign in
-            </button>
-          )}
+            </button>}
         </div>
       </div>
-    </main>
-  );
+    </main>;
 };
-
 export default Index;
