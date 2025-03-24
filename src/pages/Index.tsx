@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,8 +18,9 @@ const authSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters")
 });
 
+// Updated type definition for accessCode to allow empty string
 const accessCodeSchema = z.object({
-  accessCode: z.string().refine(code => code === ACCESS_CODE, {
+  accessCode: z.string().refine(code => code === ACCESS_CODE || code === "", {
     message: "Invalid access code"
   })
 });
