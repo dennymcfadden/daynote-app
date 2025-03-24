@@ -10,31 +10,43 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/useAuth";
 import { JournalPrompt } from "@/components/journal/JournalPrompt";
+import { ACCESS_CODE } from "@/constants/auth";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters")
 });
 
+const accessCodeSchema = z.object({
+  accessCode: z.string().refine(code => code === ACCESS_CODE, {
+    message: "Invalid access code"
+  })
+});
+
 type AuthFormValues = z.infer<typeof authSchema>;
+type AccessCodeFormValues = z.infer<typeof accessCodeSchema>;
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const [accessCodeVerified, setAccessCodeVerified] = useState(false);
+  const { toast } = useToast();
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
 
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
       password: ""
+    }
+  });
+
+  const accessCodeForm = useForm<AccessCodeFormValues>({
+    resolver: zodResolver(accessCodeSchema),
+    defaultValues: {
+      accessCode: ""
     }
   });
 
@@ -51,9 +63,7 @@ const Index = () => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const {
-          error
-        } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: values.email,
           password: values.password,
           options: {
@@ -65,17 +75,13 @@ const Index = () => {
         });
         if (error) throw error;
 
-        const {
-          error: signInError
-        } = await supabase.auth.signInWithPassword({
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password
         });
         if (signInError) throw signInError;
       } else {
-        const {
-          error
-        } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password
         });
@@ -93,14 +99,10 @@ const Index = () => {
     }
   };
 
-  const handleForgotPassword = async (values: {
-    email: string;
-  }) => {
+  const handleForgotPassword = async (values: { email: string; }) => {
     setIsLoading(true);
     try {
-      const {
-        error
-      } = await supabase.auth.resetPasswordForEmail(values.email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
         redirectTo: `${window.location.origin}/`
       });
       if (error) throw error;
@@ -121,6 +123,22 @@ const Index = () => {
     }
   };
 
+  const verifyAccessCode = (values: AccessCodeFormValues) => {
+    if (values.accessCode === ACCESS_CODE) {
+      setAccessCodeVerified(true);
+      toast({
+        title: "Access code verified",
+        description: "You can now sign up for an account",
+      });
+    } else {
+      toast({
+        title: "Invalid access code",
+        description: "Please enter a valid access code",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (user) {
     return <>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
@@ -138,62 +156,126 @@ const Index = () => {
           </div>
         </div>
 
-        {!isForgotPassword ?
-      <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField control={form.control} name="email" render={({
-            field
-          }) => <FormItem>
+        {!isForgotPassword ? (
+          isSignUp ? (
+            accessCodeVerified ? (
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField control={form.control} name="email" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="name@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="password" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="••••••••" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Processing..." : "Sign Up"}
+                  </Button>
+                </form>
+              </Form>
+            ) : (
+              <Form {...accessCodeForm}>
+                <form onSubmit={accessCodeForm.handleSubmit(verifyAccessCode)} className="space-y-4">
+                  <FormField control={accessCodeForm.control} name="accessCode" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Access Code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter access code" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Verifying..." : "Verify Access Code"}
+                  </Button>
+                </form>
+              </Form>
+            )
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="name@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>} />
-              <FormField control={form.control} name="password" render={({
-            field
-          }) => <FormItem>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="password" render={({ field }) => (
+                  <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>} />
+                  </FormItem>
+                )} />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Processing..." : isSignUp ? "Sign Up" : "Sign In"}
-              </Button>
-            </form>
-          </Form> :
-      <Form {...forgotPasswordForm}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Processing..." : "Sign In"}
+                </Button>
+              </form>
+            </Form>
+          )
+        ) : (
+          <Form {...forgotPasswordForm}>
             <form onSubmit={forgotPasswordForm.handleSubmit(handleForgotPassword)} className="space-y-4">
-              <FormField control={forgotPasswordForm.control} name="email" render={({
-            field
-          }) => <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>} />
+              <FormField control={forgotPasswordForm.control} name="email" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="name@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
               
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Processing..." : "Send Reset Link"}
               </Button>
             </form>
-          </Form>}
+          </Form>
+        )}
 
         <div className="text-center pt-4">
-          {!isForgotPassword ? <>
-              <button onClick={() => setIsSignUp(!isSignUp)} className="text-sm hover:underline mb-2 block w-full text-gray-500">
+          {!isForgotPassword ? (
+            <>
+              <button onClick={() => {
+                setIsSignUp(!isSignUp);
+                if (!isSignUp) {
+                  setAccessCodeVerified(false);
+                  accessCodeForm.reset();
+                }
+              }} 
+              className="text-sm hover:underline mb-2 block w-full text-gray-500">
                 {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
               </button>
-              <button onClick={() => setIsForgotPassword(true)} className="text-sm text-gray-500 hover:text-gray-700 hover:underline mt-2 block w-full">
+              <button onClick={() => setIsForgotPassword(true)} 
+                className="text-sm text-gray-500 hover:text-gray-700 hover:underline mt-2 block w-full">
                 Forgot password?
               </button>
-            </> : <button onClick={() => setIsForgotPassword(false)} className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
+            </> 
+          ) : (
+            <button onClick={() => setIsForgotPassword(false)} 
+              className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
               Back to sign in
-            </button>}
+            </button>
+          )}
         </div>
       </div>
     </main>;
