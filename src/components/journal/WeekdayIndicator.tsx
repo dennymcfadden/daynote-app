@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,10 +79,17 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
   };
   return <div className="flex flex-col w-full">
-      <div className="flex justify-around items-center w-full bg-[#F3EFEC]">
-        {weekdays.map((day, index) => <div key={index} className={cn("flex flex-col items-center cursor-pointer relative", isSameDay(day.date, selectedDate) ? "bg-white" : "bg-transparent")} onClick={() => handleDayClick(day.date)}>
-            <span className="text-sm text-[#403E43] pt-5 pb-6">
-              {format(day.date, 'EEE')}
+      <div className="flex justify-between items-center w-full bg-[#F3EFEC]">
+        {weekdays.map((day, index) => <div 
+            key={index} 
+            className={cn(
+              "flex flex-col items-center cursor-pointer relative flex-1",
+              isSameDay(day.date, selectedDate) ? "bg-white" : "bg-transparent"
+            )} 
+            onClick={() => handleDayClick(day.date)}
+          >
+            <span className="text-sm text-[#403E43] py-4">
+              {format(day.date, 'EE')}
             </span>
             <div className={cn("absolute bottom-0 left-0 w-full h-1", day.hasEntry ? "bg-green-500" : "bg-gray-200")} />
           </div>)}
