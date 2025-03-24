@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -75,7 +76,7 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
   };
 
-  return <div className="flex flex-col w-full -mt-[1px]">
+  return <div className="flex flex-col w-full mt-0">
       <div className="flex justify-between items-center w-full bg-[#F3EFEC]">
         {weekdays.map((day, index) => <div 
             key={index} 

@@ -140,7 +140,7 @@ export const JournalPrompt: React.FC = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col items-stretch w-full">
       <Header selectedDate={selectedDate} onDateChange={setSelectedDate} />
       <WeekdayIndicator selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       <PromptView 
@@ -150,6 +150,6 @@ export const JournalPrompt: React.FC = () => {
         onDateChange={setSelectedDate}
       />
       <JournalEntries selectedDate={selectedDate} />
-    </>
+    </div>
   );
 };
