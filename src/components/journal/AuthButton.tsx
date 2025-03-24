@@ -63,7 +63,7 @@ export const AuthButton = () => {
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="p-1 h-auto"
+          className="p-1 h-auto hover:bg-green-900"
           aria-label="Account Options"
         >
           <img 
