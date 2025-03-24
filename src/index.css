@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,6 +50,17 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    --green-900: 161 100% 7%;
+    --green-800: 162 100% 9%;
+    --green-700: 162 97% 11%;
+    --green-600: 163 97% 13%;
+    --green-500: 163 95% 18%;
+    --green-400: 163 95% 23%;
+    --green-300: 160 96% 28%;
+    --green-200: 160 96% 33%;
+    --green-100: 160 95% 39%;
+    --green-50: 160 58% 94%;
   }
 
   .dark {
