@@ -18,9 +18,7 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     date: Date;
     hasEntry: boolean;
   }>>([]);
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
 
   // Get the days of the current week
   useEffect(() => {
@@ -53,18 +51,25 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     if (!user) return;
     try {
       // Fetch all entries for the user
-      const {
-        data: entriesData
-      } = await supabase.from("journal_entries").select("entry_date").eq("user_id", user.id);
+      const { data: entriesData } = await supabase
+        .from("journal_entries")
+        .select("entry_date")
+        .eq("user_id", user.id);
+      
       if (!entriesData) return;
 
       // Convert entry_dates to Date objects
-      const entryDates = entriesData.map(entry => entry.entry_date ? new Date(entry.entry_date) : null).filter(Boolean) as Date[];
+      const entryDates = entriesData
+        .map(entry => entry.entry_date ? new Date(entry.entry_date) : null)
+        .filter(Boolean) as Date[];
 
       // Check which days have entries
       const updatedWeekdays = days.map(day => {
         // Check if there's an entry for this day (compare month, day, ignoring year)
-        const hasEntry = entryDates.some(entryDate => entryDate.getDate() === day.getDate() && entryDate.getMonth() === day.getMonth());
+        const hasEntry = entryDates.some(entryDate => 
+          entryDate.getDate() === day.getDate() && 
+          entryDate.getMonth() === day.getMonth()
+        );
         return {
           date: day,
           hasEntry
@@ -86,21 +91,31 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
            date1.getFullYear() === date2.getFullYear();
   };
 
-  return <div className="flex justify-around items-center w-full py-4 px-[6px]">
-      {weekdays.map((day, index) => (
-        <div 
-          key={index} 
-          className={cn(
-            "flex flex-col items-center cursor-pointer px-2 py-1 rounded-md",
-            isSameDay(day.date, selectedDate) ? "bg-gray-100" : ""
-          )} 
-          onClick={() => handleDayClick(day.date)}
-        >
-          <div className={cn("w-2 h-2 rounded-full mb-1", day.hasEntry ? "bg-green-600" : "bg-neutral-400")} />
-          <span className="text-sm text-[#403E43]">
-            {format(day.date, 'EEE')}
-          </span>
-        </div>
-      ))}
-    </div>;
+  return (
+    <div className="flex flex-col w-full">
+      <div className="flex justify-around items-center w-full py-2 px-[6px] bg-[#F3EFEC]">
+        {weekdays.map((day, index) => (
+          <div 
+            key={index} 
+            className={cn(
+              "flex flex-col items-center cursor-pointer px-3 py-2 relative",
+              isSameDay(day.date, selectedDate) ? "bg-white" : "bg-transparent"
+            )} 
+            onClick={() => handleDayClick(day.date)}
+          >
+            <span className="text-sm text-[#403E43]">
+              {format(day.date, 'EEE')}
+            </span>
+            <div 
+              className={cn(
+                "absolute bottom-0 left-0 w-full h-1", 
+                day.hasEntry ? "bg-green-500" : "bg-gray-200"
+              )} 
+            />
+          </div>
+        ))}
+      </div>
+      <div className="h-px w-full bg-gray-200" />
+    </div>
+  );
 };
