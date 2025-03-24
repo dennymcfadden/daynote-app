@@ -14,7 +14,7 @@ export const PromptView: React.FC<PromptViewProps> = ({
   onDateChange
 }) => {
   const isMobile = useIsMobile();
-  return <div className="flex flex-col items-center w-full px-6">
+  return <div className="flex flex-col items-center w-full px-6 pt-12 pb-12">
       <section className={cn("flex flex-col items-center gap-7 w-full px-0 cursor-pointer", isMobile ? "py-[25px]" : "py-[100px]")}>
         <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-12 items-center`}>
           <div className="flex flex-col items-center cursor-pointer" onClick={onStartRecording} aria-label="Click to start voice journaling">
