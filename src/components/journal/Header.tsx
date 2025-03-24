@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AuthButton } from "./AuthButton";
 import { FeedbackButton } from "./FeedbackButton";
@@ -6,12 +5,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-
 interface HeaderProps {
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
 }
-
 export const Header: React.FC<HeaderProps> = ({
   selectedDate = new Date(),
   onDateChange
@@ -26,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({
   return <header className="flex justify-between items-center w-full py-3 px-[12px] bg-green-700 border-b-0 mb-0">
       <div className="flex items-center">
         <AuthButton />
-        <img alt="DayNote Logo" src="/lovable-uploads/6c2eab4b-5f81-4a12-8a1a-4f17f6993a24.png" className="h-8 pt-2 ml-3" />
+        <img alt="DayNote Logo" className="h-8 pt-2 ml-3" src="/lovable-uploads/70eb4703-9578-4fcf-b437-df9f632201bc.png" />
       </div>
       <div className="flex items-center gap-3">
         <Popover>
