@@ -93,12 +93,12 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex justify-around items-center w-full py-2 px-[6px] bg-[#F3EFEC]">
+      <div className="flex justify-around items-center w-full bg-[#F3EFEC]">
         {weekdays.map((day, index) => (
           <div 
             key={index} 
             className={cn(
-              "flex flex-col items-center cursor-pointer px-3 py-2 relative",
+              "flex flex-col items-center cursor-pointer relative",
               isSameDay(day.date, selectedDate) ? "bg-white" : "bg-transparent"
             )} 
             onClick={() => handleDayClick(day.date)}
