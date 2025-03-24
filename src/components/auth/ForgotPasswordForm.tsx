@@ -38,11 +38,7 @@ export const ForgotPasswordForm = ({ onBackToSignIn }: ForgotPasswordFormProps) 
       });
       if (error) throw error;
       
-      toast({
-        title: "Password reset email sent",
-        description: "Check your email for a password reset link"
-      });
-
+      // Success toast removed
       onBackToSignIn();
     } catch (error: any) {
       toast({

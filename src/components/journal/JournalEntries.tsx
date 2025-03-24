@@ -84,10 +84,7 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
         setFilteredEntries(updatedEntries);
       }
       
-      toast({
-        title: "Entry Deleted",
-        description: "Your journal entry has been deleted"
-      });
+      // Success toast removed
     } catch (error) {
       handleError("Deleting Entry", error);
     }
@@ -105,10 +102,7 @@ export const JournalEntries: React.FC<JournalEntriesProps> = ({ selectedDate }) 
         setFilteredEntries(updatedEntries);
       }
       
-      toast({
-        title: "Entry Updated",
-        description: "Your journal entry has been updated"
-      });
+      // Success toast removed
     } catch (error) {
       handleError("Updating Entry", error);
     }

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { saveJournalEntry } from "@/services/journalService";
@@ -66,11 +65,6 @@ export const JournalPrompt: React.FC = () => {
 
     try {
       await saveJournalEntry(content, selectedDate, imageFile);
-      
-      toast({
-        title: "Journal Entry Saved",
-        description: "Your journal entry has been saved successfully.",
-      });
       
       resetTranscription();
       setIsTypingMode(false);

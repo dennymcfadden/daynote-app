@@ -32,10 +32,7 @@ export const AuthButton = () => {
   const handleDownloadEntries = async () => {
     try {
       await downloadJournalEntriesAsCsv();
-      toast({
-        title: "Download Started",
-        description: "Your journal entries are being downloaded as a CSV file."
-      });
+      // Success toast removed
     } catch (error) {
       console.error("Error downloading entries:", error);
       toast({

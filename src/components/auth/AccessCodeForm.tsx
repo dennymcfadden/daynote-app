@@ -39,10 +39,7 @@ export const AccessCodeForm = ({ onVerified }: AccessCodeFormProps) => {
     
     try {
       if (values.accessCode === ACCESS_CODE) {
-        toast({
-          title: "Access code verified",
-          description: "You can now sign up for an account",
-        });
+        // Success toast removed
         onVerified();
       } else {
         toast({
