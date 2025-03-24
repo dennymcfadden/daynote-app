@@ -1,13 +1,14 @@
-
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, isToday } from "date-fns";
 import { useAuth } from "@/hooks/useAuth";
+
 interface WeekdayIndicatorProps {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
 }
+
 export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
   selectedDate,
   onSelectDate
@@ -20,9 +21,7 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     user
   } = useAuth();
 
-  // Get the days of the current week
   useEffect(() => {
-    // Start the week on Sunday (0) instead of Monday (1)
     const start = startOfWeek(new Date(), {
       weekStartsOn: 0
     });
@@ -30,7 +29,6 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
       weekStartsOn: 0
     });
 
-    // Get all days of the current week
     const days = eachDayOfInterval({
       start,
       end
@@ -41,26 +39,22 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
     }));
     setWeekdays(initialWeekdays);
 
-    // If user is logged in, check for journal entries
     if (user) {
       fetchEntriesForWeek(days);
     }
   }, [user]);
+
   const fetchEntriesForWeek = async (days: Date[]) => {
     if (!user) return;
     try {
-      // Fetch all entries for the user
       const {
         data: entriesData
       } = await supabase.from("journal_entries").select("entry_date").eq("user_id", user.id);
       if (!entriesData) return;
 
-      // Convert entry_dates to Date objects
       const entryDates = entriesData.map(entry => entry.entry_date ? new Date(entry.entry_date) : null).filter(Boolean) as Date[];
 
-      // Check which days have entries
       const updatedWeekdays = days.map(day => {
-        // Check if there's an entry for this day (compare month, day, ignoring year)
         const hasEntry = entryDates.some(entryDate => entryDate.getDate() === day.getDate() && entryDate.getMonth() === day.getMonth());
         return {
           date: day,
@@ -72,13 +66,16 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
       console.error("Error fetching journal entries for week:", error);
     }
   };
+
   const handleDayClick = (date: Date) => {
     onSelectDate(date);
   };
+
   const isSameDay = (date1: Date, date2: Date) => {
     return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
   };
-  return <div className="flex flex-col w-full">
+
+  return <div className="flex flex-col w-full -mt-[1px]">
       <div className="flex justify-between items-center w-full bg-[#F3EFEC]">
         {weekdays.map((day, index) => <div 
             key={index} 
@@ -94,6 +91,5 @@ export const WeekdayIndicator: React.FC<WeekdayIndicatorProps> = ({
             <div className={cn("absolute bottom-0 left-0 w-full h-1", day.hasEntry ? "bg-green-500" : "bg-gray-200")} />
           </div>)}
       </div>
-      
     </div>;
 };

@@ -5,10 +5,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+
 interface HeaderProps {
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
 }
+
 export const Header: React.FC<HeaderProps> = ({
   selectedDate = new Date(),
   onDateChange
