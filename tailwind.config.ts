@@ -97,6 +97,14 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'bounce': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-20px)' }
+				},
+				'spin': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {

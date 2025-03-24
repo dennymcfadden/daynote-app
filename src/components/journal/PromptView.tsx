@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 interface PromptViewProps {
@@ -14,11 +15,29 @@ export const PromptView: React.FC<PromptViewProps> = ({
   onDateChange
 }) => {
   const isMobile = useIsMobile();
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  const handleMicClick = () => {
+    setIsAnimating(true);
+    // Reset animation state after animation completes
+    setTimeout(() => {
+      setIsAnimating(false);
+      onStartRecording();
+    }, 800); // Animation duration
+  };
+  
   return <div className="flex flex-col items-center w-full px-6 pt-12 pb-12">
       <section className={cn("flex flex-col items-center gap-7 w-full px-0 cursor-pointer", isMobile ? "py-[25px]" : "py-[100px]")}>
         <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-12 items-center`}>
-          <div className="flex flex-col items-center cursor-pointer" onClick={onStartRecording} aria-label="Click to start voice journaling">
-            <img alt="Microphone" className="w-32 h-32" src="/lovable-uploads/1474fecc-4e3a-4c8b-97fd-6da829516253.png" />
+          <div className="flex flex-col items-center cursor-pointer" onClick={handleMicClick} aria-label="Click to start voice journaling">
+            <img 
+              alt="Microphone" 
+              className={cn(
+                "w-32 h-32 transition-all duration-800",
+                isAnimating && "animate-[bounce_0.8s_ease-in-out,spin_0.8s_ease-in-out]"
+              )} 
+              src="/lovable-uploads/1474fecc-4e3a-4c8b-97fd-6da829516253.png" 
+            />
           </div>
           
           <div className="flex flex-col items-center cursor-pointer" onClick={onStartTyping} aria-label="Click to start typing journal entry">
