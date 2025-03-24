@@ -67,7 +67,7 @@ export const AuthButton = () => {
           aria-label="Account Options"
         >
           <img 
-            src="/lovable-uploads/dd193ce2-d02c-4d52-8b86-0e765da7de02.png" 
+            src="/lovable-uploads/9304e8be-90e1-44d8-bceb-ac7312a5b97e.png" 
             alt="Menu"
             className="w-7 h-7"
           />
